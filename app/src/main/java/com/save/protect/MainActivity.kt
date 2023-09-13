@@ -1,20 +1,22 @@
 package com.save.protect
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker
+import com.save.protect.PermissionUtils.hasLocationPermission
+import com.save.protect.PermissionUtils.requestLocationPermission
+import com.save.protect.PermissionUtils.shouldShowLocationPermissionRationale
+import com.save.protect.PermissionUtils.showLocationPermissionExplanationDialog
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,56 +26,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
 
-    private var userLatitude = 37.5670135
-    private var userLongitude = 126.9783740
-
-    private val locationPermissions = arrayOf(
-        android.Manifest.permission.ACCESS_FINE_LOCATION,
-        android.Manifest.permission.ACCESS_COARSE_LOCATION
-    )
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initializeMapView(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                locationResult ?: return
-                for (location in locationResult.locations) {
-                    // 위치 변경을 출력
-                    Log.d("위치 추적", "위도: ${location.latitude}, 경도: ${location.longitude}")
-                }
-            }
-        }
+        createLocationCallback()
+
         // 위치 권한 확인
         checkLocationPermission()
 
-    }
-
-    private fun startLocationUpdates() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            val locationRequest = LocationRequest()
-            locationRequest.interval = 2000 // 위치 업데이트 간격 (밀리초)
-            locationRequest.fastestInterval = 1000 // 가장 빠른 업데이트 간격 (밀리초)
-            locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-
-            fusedLocationClient.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                null
-            )
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                PERMISSION_REQUEST_CODE
-            )
-        }
-    }
-
-    private fun stopLocationUpdates() {
-        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     private fun initializeMapView(savedInstanceState: Bundle?) {
@@ -84,7 +46,6 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         mapView.onStart()
-        startLocationUpdates()
     }
 
     override fun onResume() {
@@ -122,78 +83,67 @@ class MainActivity : AppCompatActivity() {
     // 위치 권한 확인
     private fun checkLocationPermission() {
         when {
-            hasLocationPermission() -> {
+            hasLocationPermission(this) -> {
 //                getLastKnownLocation()
+                        startLocationUpdates()
             }
 
-            shouldShowLocationPermissionRationale() -> {
-                showLocationPermissionExplanationDialog()
+            shouldShowLocationPermissionRationale(this) -> {
+                showLocationPermissionExplanationDialog(this)
             }
             PackageManager.PERMISSION_DENIED == -1 -> {
-                showLocationPermissionExplanationDialog()
+                showLocationPermissionExplanationDialog(this)
             }
             else -> {
-                requestLocationPermission()
+                requestLocationPermission(this)
             }
         }
     }
 
-    // 위치 권한이 있는지 확인
-    private fun hasLocationPermission(): Boolean {
-        return ActivityCompat.checkSelfPermission(
-            this,
-            android.Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    }
 
-    // 위치 권한 설명이 필요한지 확인
-    private fun shouldShowLocationPermissionRationale(): Boolean {
-        return ActivityCompat.shouldShowRequestPermissionRationale(
-            this,
-            android.Manifest.permission.ACCESS_FINE_LOCATION
-        )
-    }
 
-    // 위치 권한 설명 다이얼로그 표시
-    private fun showLocationPermissionExplanationDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("위치 권한 필요")
-            .setMessage("이 작업을 수행하기 위해 위치 권한이 필요합니다.")
-            .setPositiveButton("동의") { _, _ ->
-                requestLocationPermission()
-            }
-            .setNegativeButton("취소") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-            .show()
-    }
 
-    // 위치 권한 요청
-    private fun requestLocationPermission() {
-        ActivityCompat.requestPermissions(this, locationPermissions, 1000)
-    }
-
-    // 사용자의 마지막 위치 가져오기
-    private fun getLastKnownLocation() {
-        if (hasLocationPermission()) {
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
-                    if (location != null) {
-                        userLatitude = location.latitude.toDouble()
-                        userLongitude = location.longitude.toDouble()
-                        setMapMarker()
-                    } else {
-                        Log.d("위치 정보", "위치정보 없음")
-                    }
+    private fun createLocationCallback() {
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                locationResult ?: return
+                for (location in locationResult.locations) {
+                    // 위치 변경을 출력
+                    // 위치 변경 시 필요한 작업을 여기에 추가할 수 있습니다.
+                    // 예를 들어, 다른 클래스에 위치 정보를 전달하거나 지도에 마커를 표시할 수 있습니다.
+                    setMapMarker(location.latitude,location.longitude)
+                    Log.d("위치 추적", "위도: ${location.latitude}, 경도: ${location.longitude}")
                 }
-        } else {
-            Log.d("위치 정보", "권한 없음")
+            }
         }
     }
+
+    @SuppressLint("MissingPermission")
+    fun startLocationUpdates(updateInterval: Long = 10000, minimunInterval: Long = 5000) {
+        Log.d("위치 추적", "시작")
+        if (hasLocationPermission(this)) {
+            val locationRequest = LocationRequest()
+            locationRequest.interval = updateInterval // 위치 업데이트 간격 (밀리초)
+            locationRequest.fastestInterval = minimunInterval // 가장 빠른 업데이트 간격 (밀리초)
+            locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                null
+            )
+        }
+    }
+
+    fun stopLocationUpdates() {
+        Log.d("위치 추적", "중지")
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
 
     // 지도에 마커 표시
-    private fun setMapMarker() {
+    public fun setMapMarker(userLatitude: Double, userLongitude: Double) {
+        Log.d("위치 추적", "마킹값 위도: ${userLatitude}, 마킹값 경도: ${userLongitude}")
         mapView.getMapAsync { nMap ->
             naverMap = nMap
 
@@ -206,11 +156,5 @@ class MainActivity : AppCompatActivity() {
             marker.map = naverMap
             marker.captionText = "유저*23#"
         }
-    }
-
-
-
-    companion object {
-        private const val PERMISSION_REQUEST_CODE = 123
     }
 }
