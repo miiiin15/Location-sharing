@@ -6,9 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-  <com.naver.maps.map.MapView
-      android:id="@+id/map_view"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent" />
+    <Button
+        android:id="@+id/button_open"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="만들기"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/button_enter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="입장하기"
+        app:layout_constraintTop_toBottomOf="@+id/button_open"
+        tools:ignore="MissingConstraints" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
