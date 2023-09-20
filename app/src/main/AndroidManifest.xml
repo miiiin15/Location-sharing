@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.save.protect">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+    <queries>
+        <package android:name="com.kakao.talk" />
+    </queries>
+
     <application
+        android:name=".GlobalApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -21,23 +27,47 @@
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="@string/naver_map_client_key" />
 
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="@string/kakao_native_key" />
+
+
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" />
         <activity
             android:name=".ShareholderActivity"
-            android:exported="true"
-            tools:ignore="DuplicateActivity" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="kakaolink"
+                    android:scheme="@string/kakao_scheme" />
+            </intent-filter>
+
+        </activity>
         <activity
             android:name=".AudienceActivity"
-            android:exported="true"
-            tools:ignore="DuplicateActivity" />
+            android:exported="true" />
+        <activity
+            android:name=".CustomShareholderActivity"
+            android:exported="true" />
     </application>
 
+
 </manifest>
+

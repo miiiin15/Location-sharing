@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="naver_map_client_key">vbbb1u6hk5</string>
+    <string name="kakao_scheme">kakao27eee38f87e06c631291470021c6af19</string>
+    <string name="kakao_native_key">27eee38f87e06c631291470021c6af19</string>
 </resources>

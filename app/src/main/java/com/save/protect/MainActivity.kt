@@ -18,9 +18,9 @@ class MainActivity : AppCompatActivity() {
         btn_enter = findViewById(R.id.button_enter)
 
         btn_open.setOnClickListener {
-            val intent = Intent(this, ShareholderActivity::class.java)
-
-            // intent.putExtra("key", "value")
+            //긴급방 만들때 쓰기
+            //val intent = Intent(this, ShareholderActivity::class.java)
+            val intent = Intent(this, CustomShareholderActivity::class.java)
 
             startActivity(intent)
         }
