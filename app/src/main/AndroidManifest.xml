@@ -17,7 +17,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Protect"
@@ -39,6 +39,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
 
@@ -48,21 +49,38 @@
         <activity
             android:name=".ShareholderActivity"
             android:exported="true">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
+
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--                <category android:name="android.intent.category.BROWSABLE" />-->
+
+<!--                <data-->
+<!--                    android:host="kakaolink"-->
+<!--                    android:scheme="@string/kakao_scheme" />-->
+<!--            </intent-filter>-->
+
+        </activity>
+        <activity
+            android:name=".AudienceActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
+                <!-- URI https://audience.com -->
+                <!--                <data android:scheme="protect" android:host="audience.com"/>-->
+                <!--                <data-->
+                <!--                    android:scheme="https"-->
+                <!--                    android:host="audience.com"-->
+                <!--                    android:pathPrefix="/doc_id" />-->
                 <data
                     android:host="kakaolink"
                     android:scheme="@string/kakao_scheme" />
-            </intent-filter>
 
+            </intent-filter>
         </activity>
-        <activity
-            android:name=".AudienceActivity"
-            android:exported="true" />
         <activity
             android:name=".CustomShareholderActivity"
             android:exported="true" />

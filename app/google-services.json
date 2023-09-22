@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "277525274495",
+    "project_id": "protect-5247e",
+    "storage_bucket": "protect-5247e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277525274495:android:a6dba78741bb1ad14d044a",
+        "android_client_info": {
+          "package_name": "com.save.protect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzN0B9AepdTAaxjnkc_WkdH-uzmjV7GA0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
