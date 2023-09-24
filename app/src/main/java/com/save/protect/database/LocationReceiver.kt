@@ -1,15 +1,15 @@
-package com.save.protect
+package com.save.protect.database
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
+import com.save.protect.data.LocationData
 
 object LocationReceiver {
 
     private val db = FirebaseFirestore.getInstance()
 
     // 사용자가 입력한 문서 ID를 전달받는 함수
-    fun observeLocationData(documentId: String, listener: (LocationData) -> Unit) {
+    fun getLocationData(documentId: String, listener: (LocationData) -> Unit) {
         db.collection("locations_test")
             .document(documentId) // 사용자가 입력한 문서 ID를 여기에 지정합니다.
             .addSnapshotListener { snapshot, e ->
@@ -23,6 +23,23 @@ object LocationReceiver {
                     locationData?.let { listener(it) }
                 }
             }
+    }
+
+    // 스냅샷 리스너
+    fun observeLocationData(documentId: String) {
+        val docRef = db.collection("locations_test").document(documentId)
+        docRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                Log.w("위치 변화 탐지기", "Listen failed.", e)
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                Log.d("위치 변화 탐지기", "Current data: ${snapshot.data}")
+            } else {
+                Log.d("위치 변화 탐지기", "Current data: null")
+            }
+        }
     }
 
 }

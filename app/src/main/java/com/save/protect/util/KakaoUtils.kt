@@ -1,6 +1,6 @@
 // PermissionUtils.kt
 
-package com.save.protect
+package com.save.protect.util
 
 import android.content.ActivityNotFoundException
 import android.content.Context

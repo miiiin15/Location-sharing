@@ -1,6 +1,6 @@
 // PermissionUtils.kt
 
-package com.save.protect
+package com.save.protect.util
 
 import android.app.AlertDialog
 import android.content.pm.PackageManager

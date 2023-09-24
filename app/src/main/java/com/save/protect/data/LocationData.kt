@@ -1,4 +1,4 @@
-package com.save.protect
+package com.save.protect.data
 
 import android.location.Location
 

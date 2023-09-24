@@ -1,4 +1,4 @@
-package com.save.protect
+package com.save.protect.activity
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
@@ -16,10 +16,13 @@ import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker
-import com.save.protect.PermissionUtils.hasLocationPermission
-import com.save.protect.PermissionUtils.requestLocationPermission
-import com.save.protect.PermissionUtils.checkShowLocationPermission
-import com.save.protect.PermissionUtils.showLocationPermissionDialog
+import com.save.protect.util.KakaoUtils
+import com.save.protect.database.LocationTransmitter
+import com.save.protect.util.PermissionUtils.hasLocationPermission
+import com.save.protect.util.PermissionUtils.requestLocationPermission
+import com.save.protect.util.PermissionUtils.checkShowLocationPermission
+import com.save.protect.util.PermissionUtils.showLocationPermissionDialog
+import com.save.protect.R
 import java.util.*
 
 class ShareholderActivity : AppCompatActivity() {
@@ -59,7 +62,7 @@ class ShareholderActivity : AppCompatActivity() {
         setInitialValues()
 
         button_invite.setOnClickListener {
-            KakaoUtils.shareText(this, "위치공유 초대","위치공유 초대가 왔습니다.", "${uid}")
+            KakaoUtils.shareText(this, "위치공유 초대", "위치공유 초대가 왔습니다.", "${uid}")
         }
 
     }

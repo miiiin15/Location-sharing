@@ -1,9 +1,8 @@
-package com.save.protect
+package com.save.protect.util
 
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.os.Build
 
 class ClipboardUtils(private val context: Context) {
 

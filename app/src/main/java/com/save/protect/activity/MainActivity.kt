@@ -1,12 +1,13 @@
-package com.save.protect
+package com.save.protect.activity
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import com.save.protect.util.ClipboardUtils
+import com.save.protect.R
 
 class MainActivity : AppCompatActivity() {
 

@@ -1,9 +1,9 @@
-package com.save.protect
+package com.save.protect.database
 
 import android.util.Log
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.save.protect.data.LocationData
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,4 +34,6 @@ object LocationTransmitter {
                 Log.e("위치 송신기", "문서 업데이트 중 오류 발생", e)
             }
     }
+
+
 }

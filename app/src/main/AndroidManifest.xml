@@ -33,7 +33,7 @@
 
 
         <activity
-            android:name=".SplashActivity"
+            android:name=".activity.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,10 +44,10 @@
 
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true" />
         <activity
-            android:name=".ShareholderActivity"
+            android:name=".activity.ShareholderActivity"
             android:exported="true">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.VIEW" />-->
@@ -62,7 +62,7 @@
 
         </activity>
         <activity
-            android:name=".AudienceActivity"
+            android:name=".activity.AudienceActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -82,7 +82,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CustomShareholderActivity"
+            android:name=".activity.CustomShareholderActivity"
             android:exported="true" />
     </application>
 

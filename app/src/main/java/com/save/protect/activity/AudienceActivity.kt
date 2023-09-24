@@ -1,4 +1,4 @@
-package com.save.protect
+package com.save.protect.activity
 
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.*
+import com.google.firebase.firestore.ListenerRegistration
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate
@@ -14,12 +15,16 @@ import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.PathOverlay
+import com.save.protect.database.LocationReceiver
+import com.save.protect.util.PermissionUtils
+import com.save.protect.R
 import org.json.JSONArray
 
 
 class AudienceActivity : AppCompatActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var listenerRegistration: ListenerRegistration? = null
 
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
@@ -66,6 +71,7 @@ class AudienceActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         mapView.onStart()
+        docId.let { LocationReceiver.observeLocationData(it) }
     }
 
     override fun onResume() {
@@ -87,6 +93,7 @@ class AudienceActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         mapView.onStop()
+        listenerRegistration?.remove()
     }
 
     override fun onDestroy() {
@@ -118,8 +125,9 @@ class AudienceActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchLocationData(id: String = "test1234") {
-        LocationReceiver.observeLocationData(id) { locationData ->
+    // 단발성 위치 수신기
+    private fun fetchLocationData(id: String = "") {
+        LocationReceiver.getLocationData(id) { locationData ->
             // Handle received location data
             val locationList = locationData.locationList
 
