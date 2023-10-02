@@ -7,13 +7,15 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.save.protect.R
+import com.save.protect.custom.CustomInput
+import com.save.protect.custom.IsValidListener
 
 
 class CustomShareholderActivity : AppCompatActivity() {
 
-    private lateinit var editTextMarkLimit: EditText
-    private lateinit var editTextUpdateInterval: EditText
-    private lateinit var editTextMinimumInterval: EditText
+    private lateinit var editTextMarkLimit: CustomInput
+    private lateinit var editTextUpdateInterval: CustomInput
+    private lateinit var editTextMinimumInterval: CustomInput
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +24,24 @@ class CustomShareholderActivity : AppCompatActivity() {
         editTextMarkLimit = findViewById(R.id.editText_markLimit)
         editTextUpdateInterval = findViewById(R.id.editText_updateInterval)
         editTextMinimumInterval = findViewById(R.id.editText_minimumInterval)
+
+        editTextMarkLimit.setIsValidListener(object : IsValidListener {
+            override fun isValid(text: String): Boolean {
+                return text.isNotEmpty() && text.toInt() in 1..10
+            }
+        })
+
+        editTextUpdateInterval.setIsValidListener(object : IsValidListener {
+            override fun isValid(text: String): Boolean {
+                return text.isNotEmpty() && text.toInt() in 1..60
+            }
+        })
+
+        editTextMinimumInterval.setIsValidListener(object : IsValidListener {
+            override fun isValid(text: String): Boolean {
+                return text.isNotEmpty() && text.toInt() in 1..60
+            }
+        })
 
         val buttonOpenNextScreen: Button = findViewById(R.id.button_openNextScreen)
         buttonOpenNextScreen.setOnClickListener {
