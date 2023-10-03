@@ -72,7 +72,7 @@ class SignupActivity : AppCompatActivity() {
                 // 이메일 또는 비밀번호가 비어 있거나 이메일 중복 확인이 되지 않은 경우
                 Toast.makeText(this, "이메일 또는 비밀번호를 확인하세요.", Toast.LENGTH_SHORT).show()
             } else {
-                AuthManager.signUpFirebase(email, password) {
+                AuthManager.signUpFireBase(email, password) {
                     Toast.makeText(this, "회원가입 성공 로그인을 실행해주세요.", Toast.LENGTH_SHORT).show()
                     finish() }
             }
