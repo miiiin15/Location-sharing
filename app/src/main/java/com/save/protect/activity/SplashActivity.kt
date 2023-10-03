@@ -39,7 +39,7 @@ class SplashActivity : AppCompatActivity() {
     private fun checkLocationPermission() {
         when {
             PermissionUtils.hasLocationPermission(this) -> {
-                login()
+                next()
             }
             PermissionUtils.checkShowLocationPermission(this) -> {
                 PermissionUtils.showLocationPermissionDialog(this)
@@ -79,7 +79,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun next() {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this,  SigninActivity::class.java)
         startActivity(intent)
         finish()
     }
