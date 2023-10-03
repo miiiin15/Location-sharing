@@ -1,5 +1,6 @@
 package com.save.protect.activity
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -11,18 +12,26 @@ import com.save.protect.R
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var btn_userInfo: Button
     private lateinit var btn_open: Button
     private lateinit var btn_enter: Button
 
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
 
+        btn_userInfo = findViewById(R.id.button_userInfo)
         btn_open = findViewById(R.id.button_open)
         btn_enter = findViewById(R.id.button_enter)
 
+        btn_userInfo.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+
+            startActivity(intent)
+        }
         btn_open.setOnClickListener {
             //긴급방 만들때 쓰기
             //val intent = Intent(this, ShareholderActivity::class.java)
@@ -58,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
         // 붙여넣기 버튼에 아무 동작을 넣지 않음
         buttonPaste.setOnClickListener {
-           copiedText.let { editText.setText(it)}
+            copiedText.let { editText.setText(it) }
         }
 
         buttonConfirm.setOnClickListener {
