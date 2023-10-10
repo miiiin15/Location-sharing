@@ -2,25 +2,23 @@ package com.save.protect
 
 import android.app.Application
 import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.KakaoSdk.keyHash
 
 
 class GlobalApplication : Application() {
-    //    private lateinit var auth: FirebaseAuth
     override fun onCreate() {
         super.onCreate()
         instance = this
 
         // 앱 초기화 작업 수행
 
-        // Initialize Firebase Auth
-//        auth = Firebase.auth
+        // 라이트 모드 강제
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         // Kakao SDK 초기화
         KakaoSdk.init(this, resources.getString(R.string.kakao_native_key))
-//        KakaoSdk.init(this, "27eee38f87e06c631291470021c6af19")
-
         val kakaoHashKey = keyHash
         Log.d("kakaoHashKey", kakaoHashKey)
     }
