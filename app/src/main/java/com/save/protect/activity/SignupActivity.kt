@@ -35,13 +35,13 @@ class SignupActivity : AppCompatActivity() {
             // 이메일 중복 확인 로직
             // 중복되면 isEmailDuplicate 변수를 true로 설정하고, tvDuplicateStatus에 메시지를 표시
 
-            try{
+            try {
 
-            AuthManager.checkEmailDuplication(email).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val result = task.result // 중복 확인 결과
+                AuthManager.checkEmailDuplication(email).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val result = task.result // 중복 확인 결과
 
-                    Log.d("중복","${result}")
+                        Log.d("중복", "${result}")
 
 //                    if (result?.signInMethods?.isEmpty() == true) {
 //                        // 이메일이 중복되지 않음
@@ -50,15 +50,15 @@ class SignupActivity : AppCompatActivity() {
 //                        // 이메일이 이미 등록되어 있음
 //                        // 중복된 이메일 주소
 //                    }
-                } else {
-                    // 중복 확인 작업 실패
-                    val exception = task.exception
-                    // 예외 처리
-                    Log.d("실패","${exception?.message}")
+                    } else {
+                        // 중복 확인 작업 실패
+                        val exception = task.exception
+                        // 예외 처리
+                        Log.d("실패", "${exception?.message}")
+                    }
                 }
-            }
-            }catch (e:Exception){
-                Log.d("fail","${e}")
+            } catch (e: Exception) {
+                Log.d("fail", "${e}")
             }
 
 
@@ -74,7 +74,8 @@ class SignupActivity : AppCompatActivity() {
             } else {
                 AuthManager.signUpFireBase(email, password) {
                     Toast.makeText(this, "회원가입 성공 로그인을 실행해주세요.", Toast.LENGTH_SHORT).show()
-                    finish() }
+                    finish()
+                }
             }
         }
     }
