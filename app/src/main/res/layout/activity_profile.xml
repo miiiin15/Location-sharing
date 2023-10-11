@@ -12,8 +12,9 @@
     <!-- 프로필 이미지를 표시할 ImageView -->
     <ImageView
         android:id="@+id/imageViewProfile"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/logo_foreground" />
 
     <!-- 사용자 닉네임을 입력할 EditText -->

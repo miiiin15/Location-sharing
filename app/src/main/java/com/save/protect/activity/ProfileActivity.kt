@@ -3,7 +3,6 @@ package com.save.protect.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.storage.StorageManager
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -48,18 +47,19 @@ class ProfileActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 Toast.makeText(this, "${e.message}", Toast.LENGTH_SHORT).show()
-
             }
         }
 
         buttonRegister.setOnClickListener {
-//            editTextNickname.text.let {
-//                UserInfoManager.setUserInfo(it.toString(), imageUrl)
-//            }
+
 
             if (imageUrl != null) {
                 FirebaseStorageManager.uploadImageToFirebaseStorage(uid, imageUrl!!) {
-                    Log.d("프로필", "${imageUrl}")
+                    val URL = it
+                    Log.d("다운로드 URL", " : ${URL}")
+                    editTextNickname.text.let {
+                        UserInfoManager.setUserInfo(it.toString(), URL.toString())
+                    }
                 }
             } else {
                 Toast.makeText(this, "이미지를 갤러리에서 업로드 해주세요.", Toast.LENGTH_SHORT).show()
@@ -71,19 +71,8 @@ class ProfileActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         ImageUtils.handleActivityResult(requestCode, resultCode, data) {
-            if (ImageUtils.isImageSizeValid(this, it)) {
-                // 이미지 크기가 적절한 경우
-                imageViewProfile.setImageURI(it)
-                imageUrl = it
-            } else {
-                // 이미지 크기가 너무 크거나 오류 발생한 경우
-                Toast.makeText(
-                    this,
-                    "이미지가 크거나 올바르지 않습니다. (1024 * 1024) 이하의 이미지 파일을 지정해주세요.",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
+            imageViewProfile.setImageBitmap(ImageUtils.loadImageAndResize(this, it, 500))
+            imageUrl = it
         }
     }
 }
