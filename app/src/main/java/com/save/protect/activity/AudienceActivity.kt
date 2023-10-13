@@ -1,5 +1,6 @@
 package com.save.protect.activity
 
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
@@ -14,10 +15,16 @@ import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.overlay.PathOverlay
-import com.save.protect.database.LocationReceiver
-import com.save.protect.util.PermissionUtils
+import com.naver.maps.map.util.MarkerIcons
 import com.save.protect.R
+import com.save.protect.data.LocationData
+import com.save.protect.data.UserInfo
+import com.save.protect.database.LocationReceiver
+import com.save.protect.database.UserInfoManager
+import com.save.protect.util.ImageUtils
+import com.save.protect.util.PermissionUtils
 import org.json.JSONArray
 
 
@@ -28,13 +35,16 @@ class AudienceActivity : AppCompatActivity() {
 
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
-    var marker = Marker()
-    val path = PathOverlay()
     private lateinit var docId: String
 
+    // 경로선 객체
+    private var pathOverlay = PathOverlay()
 
-    // 위치 데이터를 저장하는 리스트 (제한된 길이 유지)
-    private val locationDataList = mutableListOf<Any>()
+    // 마커 객체
+    private var marker = Marker()
+
+    // 유저정보
+    private lateinit var shareholderInfo: UserInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,8 +55,7 @@ class AudienceActivity : AppCompatActivity() {
         initDocId()
         // 위치 권한 확인
         checkLocationPermission()
-        // Firestore 위치 데이터 수신
-        docId?.let { fetchLocationData(it) }
+
     }
 
     private fun initDocId() {
@@ -59,9 +68,12 @@ class AudienceActivity : AppCompatActivity() {
             deepLinkValue.let { Log.d("딥링크 값", it.toString()) }
         } else {
             docId = intent.getStringExtra("doc_id").toString()
-
+        }
+        docId?.let {
+            fetchUserInfo(it)
         }
     }
+
 
     private fun initializeMapView(savedInstanceState: Bundle?) {
         mapView = findViewById(R.id.map_view_audience)
@@ -71,13 +83,19 @@ class AudienceActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         mapView.onStart()
-        docId.let { LocationReceiver.observeLocationData(it) }
+        docId.let {
+            LocationReceiver.observeLocationData(it) { locationData ->
+                draw(locationData)
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
         mapView.onResume()
-        docId?.let { fetchLocationData(it) }
+        docId?.let {
+            fetchLocationData(it)
+        }
     }
 
     override fun onPause() {
@@ -110,7 +128,7 @@ class AudienceActivity : AppCompatActivity() {
     private fun checkLocationPermission() {
         when {
             PermissionUtils.hasLocationPermission(this) -> {
-//                getLastKnownLocation()
+
             }
 
             PermissionUtils.checkShowLocationPermission(this) -> {
@@ -128,61 +146,77 @@ class AudienceActivity : AppCompatActivity() {
     // 단발성 위치 수신기
     private fun fetchLocationData(id: String = "") {
         LocationReceiver.getLocationData(id) { locationData ->
-            // Handle received location data
-            val locationList = locationData.locationList
-
-            if (locationList != null && locationList.isNotEmpty()) {
-                val coords = mutableListOf<LatLng>()
-
-                val jsonArray = JSONArray(locationList)
-
-                // 위치 데이터를 기반으로 좌표 리스트를 생성합니다.
-                for (i in 0 until jsonArray.length()) {
-                    val location = jsonArray.getJSONObject(i)
-                    val latLng =
-                        LatLng(location.getDouble("latitude"), location.getDouble("longitude"))
-                    coords.add(latLng)
-                }
-                // 생성한 좌표 리스트를 사용하여 경로선 그리기 함수 호출
-                drawPath(coords)
-            } else {
-                Log.d("위치 수신기", "No location data available.")
-            }
+            draw(locationData)
         }
     }
 
+    private fun fetchUserInfo(id: String = "") {
+        UserInfoManager.getUserInfo(id) {
+            Log.d("유저정보", " $it")
+            shareholderInfo = it
+
+        }
+    }
+
+    fun draw(locationData: LocationData) {
+        // Handle received location data
+        val locationList = locationData.locationList
+
+        if (locationList != null && locationList.isNotEmpty()) {
+            val coords = mutableListOf<LatLng>()
+
+            val jsonArray = JSONArray(locationList)
+
+            // 위치 데이터를 기반으로 좌표 리스트를 생성합니다.
+            for (i in 0 until jsonArray.length()) {
+                val location = jsonArray.getJSONObject(i)
+                val latLng =
+                    LatLng(location.getDouble("latitude"), location.getDouble("longitude"))
+                coords.add(latLng)
+            }
+            // 생성한 좌표 리스트를 사용하여 경로선 그리기 함수 호출
+            drawPath(coords)
+        } else {
+            Log.d("위치 수신기", "No location data available.")
+        }
+    }
+
+
     // 경로선 그리기 함수
+    @SuppressLint("ResourceAsColor")
     fun drawPath(coords: MutableList<LatLng>) {
+
         mapView.getMapAsync { nMap ->
             naverMap = nMap
 
+            Log.d("그리기용 정보 ", "$coords")
             if (coords.isNotEmpty()) {
-                // 경로선 객체 생성
-                val pathOverlay = PathOverlay()
-
-                // 경로선 좌표 설정
-                pathOverlay.coords = coords
-
-                // 경로선 색상 및 두께 설정 (옵션)
-                pathOverlay.color = Color.BLUE // 색상 설정
-                pathOverlay.width = 5 // 두께 설정 (픽셀)
-
-                // 네이버 지도에 경로선 추가
-                pathOverlay.map = naverMap
-
-                // 현재 줌 레벨 가져오기
-                val currentZoom = naverMap.cameraPosition.zoom
-
-                // coords 배열이 존재할 경우 0번째 값을 로그로 출력
                 val firstLatLng = coords[0]
                 val initialLatLng = LatLng(firstLatLng.latitude, firstLatLng.longitude)
                 val cameraUpdate =
                     CameraUpdate.scrollAndZoomTo(initialLatLng, 17.0).animate(CameraAnimation.Fly)
+
+                if (coords.size > 2) {
+                    // 경로선 좌표 설정
+                    pathOverlay.coords = coords
+
+                    // 경로선 색상 및 두께 설정 (옵션)
+                    pathOverlay.color = Color.WHITE// 색상 설정
+                    pathOverlay.width = 10 // 두께 설정 (픽셀)
+                    pathOverlay.outlineWidth = 5
+                    pathOverlay.outlineColor = Color.BLACK
+                    // 지도에 경로선 추가
+                    pathOverlay.map = naverMap
+                } else {
+                    pathOverlay.map = null
+                }
                 // 카메라 이동
                 naverMap.moveCamera(cameraUpdate)
+                // 마커 찍기
+                setMapMarker(firstLatLng.latitude, firstLatLng.longitude)
 
             } else {
-                // coords 배열이 비어있을 경우 Toast를 사용하여 알림 표시
+                // coords 배열이 비어있을 경우
                 val toast = Toast.makeText(this, "좌표 데이터 없음", Toast.LENGTH_SHORT)
                 toast.show()
             }
@@ -191,19 +225,38 @@ class AudienceActivity : AppCompatActivity() {
 
 
     // 지도에 마커 표시
-    public fun setMapMarker(userLatitude: Double, userLongitude: Double) {
+    private fun setMapMarker(userLatitude: Double, userLongitude: Double) {
         Log.d("위치 추적", "마킹값 위도: ${userLatitude}, 마킹값 경도: ${userLongitude}")
         mapView.getMapAsync { nMap ->
             naverMap = nMap
 
             val initialLatLng = LatLng(userLatitude, userLongitude)
-            val cameraUpdate = CameraUpdate.scrollTo(initialLatLng)
+            val cameraUpdate = CameraUpdate.scrollAndZoomTo(initialLatLng, 17.0).animate(
+                CameraAnimation.Fly
+            )
             naverMap.moveCamera(cameraUpdate)
-
 
             marker.position = initialLatLng
             marker.map = naverMap
-            marker.captionText = "유저*23#"
+            if (shareholderInfo.userName.isNotEmpty()) {
+                marker.captionText = shareholderInfo.userName
+            } else {
+                marker.captionText = "익명의 유저"
+            }
+            if (shareholderInfo.imageUrl.isNotEmpty()) {
+                // 마커 이미지를 URL에서 로드하여 설정
+                Log.d("이미지 주소", " ${shareholderInfo.imageUrl}")
+                ImageUtils.loadBitmapFromUrl(this, shareholderInfo.imageUrl) {
+                    marker.icon = OverlayImage.fromBitmap(
+                        // 이미지 리사이징
+                        ImageUtils.resizeAndCropToCircle(it!!, 150, 150, 3, Color.BLACK)
+                    )
+                }
+            } else {
+                marker.icon = MarkerIcons.BLACK
+                marker.iconTintColor = Color.LTGRAY
+            }
         }
     }
+
 }

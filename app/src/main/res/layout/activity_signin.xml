@@ -7,16 +7,21 @@
     android:padding="16dp"
     tools:context=".activity.SignupActivity">
 
+    <View
+        android:id="@+id/outsideView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <com.save.protect.custom.CustomInput
         android:id="@+id/editTextEmail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="이메일을 입력하세요"
+        android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <TextView
         android:id="@+id/tvDuplicateStatus"

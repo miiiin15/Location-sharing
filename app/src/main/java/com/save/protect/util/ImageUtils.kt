@@ -3,11 +3,12 @@ package com.save.protect.util
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
+import android.graphics.*
 import android.net.Uri
 import android.provider.MediaStore
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
@@ -134,5 +135,54 @@ object ImageUtils {
                 onSuccess(imageUri)
             }
         }
+    }
+
+    // 이미지 URL을 비트맵으로 변환
+    fun loadBitmapFromUrl(context: Context, imageUrl: String, callback: (Bitmap?) -> Unit) {
+        Glide.with(context)
+            .asBitmap()
+            .load(imageUrl)
+            .into(object : SimpleTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    callback(resource) // 이미지 로딩이 완료되면 콜백을 호출하고 비트맵을 전달
+                }
+            })
+    }
+
+    fun resizeAndCropToCircle(
+        bitmap: Bitmap,
+        width: Int,
+        height: Int,
+        borderWidth: Int,
+        borderColor: Int
+    ): Bitmap {
+        // 원 모양의 비트맵을 만들기 위한 빈 비트맵 생성
+        val outputBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(outputBitmap)
+
+        // 입력 비트맵을 원 모양으로 자르기 위한 원의 경계 상자 계산
+        val centerX = width / 2f
+        val centerY = height / 2f
+        val radius = Math.min(centerX, centerY)
+
+        // 입력 비트맵을 원 모양으로 자르기
+        val paint = Paint()
+        val rect = Rect(0, 0, bitmap.width, bitmap.height)
+        val rectF = RectF(0f, 0f, width.toFloat(), height.toFloat())
+        paint.isAntiAlias = true
+        canvas.drawARGB(0, 0, 0, 0)
+        canvas.drawCircle(centerX, centerY, radius, paint)
+        paint.xfermode =
+            android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(bitmap, rect, rectF, paint)
+
+        // 테두리 그리기
+        val borderPaint = Paint()
+        borderPaint.color = borderColor
+        borderPaint.style = Paint.Style.STROKE
+        borderPaint.strokeWidth = borderWidth.toFloat()
+        canvas.drawCircle(centerX, centerY, radius - borderWidth / 2, borderPaint)
+
+        return outputBitmap
     }
 }

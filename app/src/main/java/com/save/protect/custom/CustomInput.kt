@@ -35,13 +35,15 @@ class CustomInput : AppCompatEditText {
         // EditText의 배경을 투명한 밑줄로 설정
         background = ContextCompat.getDrawable(context, R.drawable.custom_input_bg)
         // inputType이 textpassword 타입이 아닌경우 1줄만
-        isSingleLine = inputType != 129
+//        isSingleLine = inputType != 129 && inputType != 128
 
 
         // 입력 중, 올바른 값, 올바르지 않은 값에 따라 밑줄 색상을 변경
         setOnFocusChangeListener { _, hasFocus ->
             val colorResId = if (hasFocus) {
                 R.color.primary // 입력 중
+            } else if (isValid() && !hasFocus) {
+                R.color.default_color // 올바른 값
             } else if (isValid()) {
                 R.color.primary // 올바른 값
             } else {

@@ -78,10 +78,6 @@ class ShareholderActivity : AppCompatActivity() {
 
 
 
-
-        Log.d("유저 정보", "${uid}")
-
-
         // 값이 null인 경우 처리
         if (markLimit != 0 || updateInterval != 0 || minimumInterval != 0) {
             setting_markLimit = markLimit
@@ -202,7 +198,6 @@ class ShareholderActivity : AppCompatActivity() {
 
     // 지도에 마커 표시
     private fun setMapMarker(userLatitude: Double, userLongitude: Double) {
-        Log.d("위치 추적", "마킹값 위도: ${userLatitude}, 마킹값 경도: ${userLongitude}")
         mapView.getMapAsync { nMap ->
             naverMap = nMap
 

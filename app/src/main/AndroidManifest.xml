@@ -43,10 +43,12 @@
         </activity>
         <activity
             android:name=".activity.SignupActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.SigninActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="true" />
@@ -56,16 +58,16 @@
         <activity
             android:name=".activity.ShareholderActivity"
             android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.VIEW" />-->
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.VIEW" />-->
 
-<!--                <category android:name="android.intent.category.DEFAULT" />-->
-<!--                <category android:name="android.intent.category.BROWSABLE" />-->
+            <!--                <category android:name="android.intent.category.DEFAULT" />-->
+            <!--                <category android:name="android.intent.category.BROWSABLE" />-->
 
-<!--                <data-->
-<!--                    android:host="kakaolink"-->
-<!--                    android:scheme="@string/kakao_scheme" />-->
-<!--            </intent-filter>-->
+            <!--                <data-->
+            <!--                    android:host="kakaolink"-->
+            <!--                    android:scheme="@string/kakao_scheme" />-->
+            <!--            </intent-filter>-->
 
         </activity>
         <activity

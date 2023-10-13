@@ -26,7 +26,7 @@ object LocationReceiver {
     }
 
     // 스냅샷 리스너
-    fun observeLocationData(documentId: String) {
+    fun observeLocationData(documentId: String, listener: (LocationData) -> Unit) {
         val docRef = db.collection("locations_test").document(documentId)
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -36,6 +36,8 @@ object LocationReceiver {
 
             if (snapshot != null && snapshot.exists()) {
                 Log.d("위치 변화 탐지기", "Current data: ${snapshot.data}")
+                val locationData = snapshot.toObject(LocationData::class.java)
+                locationData?.let { listener(it) }
             } else {
                 Log.d("위치 변화 탐지기", "Current data: null")
             }
