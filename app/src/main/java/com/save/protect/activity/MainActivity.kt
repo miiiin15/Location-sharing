@@ -4,17 +4,25 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import com.save.protect.util.ClipboardUtils
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.save.protect.R
+import com.save.protect.data.UserManagement
+import com.save.protect.database.UserInfoManager
+import com.save.protect.util.ClipboardUtils
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var btn_userInfo: Button
     private lateinit var btn_open: Button
     private lateinit var btn_enter: Button
+
+    private lateinit var auth: FirebaseAuth
 
 
     @SuppressLint("MissingInflatedId")
@@ -26,6 +34,11 @@ class MainActivity : AppCompatActivity() {
         btn_userInfo = findViewById(R.id.button_userInfo)
         btn_open = findViewById(R.id.button_open)
         btn_enter = findViewById(R.id.button_enter)
+
+        auth = Firebase.auth
+
+        // 유저 정보 초기화
+        fetchUserInfo(auth.currentUser?.uid.toString())
 
         btn_userInfo.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
@@ -46,6 +59,19 @@ class MainActivity : AppCompatActivity() {
 //            val intent = Intent(this, AudienceActivity::class.java)
 //            intent.putExtra("doc_id", "test1234")
 //            startActivity(intent)
+
+        }
+    }
+
+    private fun fetchUserInfo(id: String = "") {
+        if (id.isNotEmpty()) {
+            UserInfoManager.getUserInfo(id) {
+                Log.d("유저정보", " $it")
+                UserManagement.setUserInfo(it)
+            }
+            UserManagement.uid = id
+        } else {
+            //TODO : 유저정보 저장실패 처리
         }
     }
 

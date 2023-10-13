@@ -13,6 +13,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.save.protect.R
+import com.save.protect.data.UserInfo
+import com.save.protect.data.UserManagement
 import com.save.protect.database.FirebaseStorageManager
 import com.save.protect.database.UserInfoManager
 import com.save.protect.util.ImageUtils
@@ -27,6 +29,8 @@ class ProfileActivity : AppCompatActivity() {
 
     private var uid: String? = null
 
+    private var userData: UserInfo? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,9 +40,7 @@ class ProfileActivity : AppCompatActivity() {
         editTextNickname = findViewById(R.id.editTextNickname)
         buttonRegister = findViewById(R.id.buttonRegister)
 
-        auth = Firebase.auth
-        uid = auth.currentUser?.uid
-
+        init()
 
         imageViewProfile.setOnClickListener {
             try {
@@ -52,17 +54,36 @@ class ProfileActivity : AppCompatActivity() {
 
         buttonRegister.setOnClickListener {
 
-
             if (imageUrl != null) {
                 FirebaseStorageManager.uploadImageToFirebaseStorage(uid, imageUrl!!) {
                     val URL = it
                     Log.d("다운로드 URL", " : ${URL}")
                     editTextNickname.text.let {
                         UserInfoManager.setUserInfo(it.toString(), URL.toString())
+                        // TODO : 클로저로 바꾸기
+                        Toast.makeText(this, "등록 성공", Toast.LENGTH_SHORT).show()
+                        finish()
                     }
                 }
             } else {
                 Toast.makeText(this, "이미지를 갤러리에서 업로드 해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun init() {
+        uid = UserManagement.uid
+        userData = UserManagement.getUserInfo()
+
+        Log.e("저장된유저 ", "${UserManagement.getUserInfo()}")
+        Log.e("저장된유저 ", UserManagement.uid)
+
+        if (userData?.userName?.isNotEmpty()!!) {
+            editTextNickname.setText(userData!!.userName)
+        }
+        if (userData?.imageUrl?.isNotEmpty()!!) {
+            ImageUtils.loadBitmapFromUrl(this, userData?.imageUrl!!) {
+                imageViewProfile.setImageBitmap(it)
             }
         }
     }
