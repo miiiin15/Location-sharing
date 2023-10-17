@@ -3,7 +3,7 @@ package com.save.protect.data
 class UserManagement {
     companion object {
 
-        private var userInfo: UserInfo? = null
+        private var userInfo: UserInfo = UserInfo()
         var uid: String = ""
 
         // 사용자 정보 설정

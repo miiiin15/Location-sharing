@@ -47,8 +47,8 @@ class SigninActivity : AppCompatActivity() {
         }
 
         btnLogin.setOnClickListener {
-            val email = editTextEmail.text.toString()
-            val password = editTextPassword.text.toString()
+            val email = editTextEmail.text.toString().trim()
+            val password = editTextPassword.text.toString().trim()
 
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
