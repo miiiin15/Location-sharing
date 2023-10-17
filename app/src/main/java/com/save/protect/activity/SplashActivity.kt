@@ -14,6 +14,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.save.protect.util.PermissionUtils
 import com.save.protect.R
+import com.save.protect.data.UserManagement
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
@@ -27,6 +28,9 @@ class SplashActivity : AppCompatActivity() {
 
         // Initialize Firebase Auth
         auth = Firebase.auth
+
+        // 리셋 먼저
+        UserManagement.resetUserInfo()
 
         // Kakao SDK 초기화
 //        KakaoSdk.init(this, "${R.string.kakao_native_key}")
@@ -79,7 +83,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun next() {
-        val intent = Intent(this,  SigninActivity::class.java)
+        val intent = Intent(this, SigninActivity::class.java)
         startActivity(intent)
         finish()
     }
