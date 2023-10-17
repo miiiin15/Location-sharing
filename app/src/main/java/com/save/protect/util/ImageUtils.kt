@@ -157,7 +157,7 @@ object ImageUtils {
         borderColor: Int
     ): Bitmap {
         // 원 모양의 비트맵을 만들기 위한 빈 비트맵 생성
-        val outputBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val outputBitmap = Bitmap.createBitmap(width, height + 20, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(outputBitmap)
 
         // 입력 비트맵을 원 모양으로 자르기 위한 원의 경계 상자 계산
