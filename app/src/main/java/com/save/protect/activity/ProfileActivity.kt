@@ -10,7 +10,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.save.protect.R
 import com.save.protect.data.UserInfo
@@ -29,7 +28,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private var uid: String? = null
 
-    private var userData: UserInfo? = null
+    private lateinit var userData: UserInfo
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,10 +58,10 @@ class ProfileActivity : AppCompatActivity() {
                     val URL = it
                     Log.d("다운로드 URL", " : ${URL}")
                     editTextNickname.text.let {
-                        UserInfoManager.setUserInfo(it.toString(), URL.toString())
-                        // TODO : 클로저로 바꾸기
-                        Toast.makeText(this, "등록 성공", Toast.LENGTH_SHORT).show()
-                        finish()
+                        UserInfoManager.setUserInfo(it.toString(), URL.toString()) {
+                            Toast.makeText(this, "등록 성공", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
                     }
                 }
             } else {
@@ -73,7 +72,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun init() {
         uid = UserManagement.uid
-        userData = UserManagement.getUserInfo()
+        userData = UserManagement.getUserInfo()!!
 
         Log.e("저장된유저 ", "${UserManagement.getUserInfo()}")
         Log.e("저장된유저 ", UserManagement.uid)

@@ -11,7 +11,7 @@ object UserInfoManager {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    fun setUserInfo(userName: String, imageUrl: String) {
+    fun setUserInfo(userName: String, imageUrl: String, onSuccess: () -> Unit) {
         val currentUser = auth.currentUser
         val uid = currentUser?.uid
 
@@ -24,11 +24,11 @@ object UserInfoManager {
                 .set(userInfo)
                 .addOnSuccessListener {
                     // 데이터 등록 성공
-                    // 필요한 처리를 수행하세요.
+                    onSuccess()
                 }
                 .addOnFailureListener { e ->
                     // 데이터 등록 실패
-                    // 오류 처리를 수행하세요.
+                    // 오류 처리
                 }
         }
     }
