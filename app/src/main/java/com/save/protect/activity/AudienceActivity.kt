@@ -249,7 +249,7 @@ class AudienceActivity : AppCompatActivity() {
                 ImageUtils.loadBitmapFromUrl(this, shareholderInfo.imageUrl) {
                     marker.icon = OverlayImage.fromBitmap(
                         // 이미지 리사이징
-                        ImageUtils.resizeAndCropToCircle(it!!, 150, 150, 3, Color.BLACK)
+                        ImageUtils.resizeAndCropToCircle(it!!, 100, 100, 3, Color.BLACK)
                     )
                 }
             } else {
