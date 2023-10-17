@@ -6,6 +6,11 @@ class UserManagement {
         private var userInfo: UserInfo = UserInfo()
         var uid: String = ""
 
+        fun resetUserInfo() {
+            userInfo = UserInfo()
+            uid = ""
+        }
+
         // 사용자 정보 설정
         fun setUserInfo(userData: UserInfo) {
             userInfo =
