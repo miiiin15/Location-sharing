@@ -2,27 +2,31 @@ package com.save.protect.activity
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.CheckBox
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.*
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker
-import com.save.protect.util.KakaoUtils
+import com.naver.maps.map.overlay.OverlayImage
+import com.naver.maps.map.util.MarkerIcons
+import com.save.protect.R
+import com.save.protect.data.UserInfo
+import com.save.protect.data.UserManagement
 import com.save.protect.database.LocationTransmitter
+import com.save.protect.util.ImageUtils
+import com.save.protect.util.KakaoUtils
+import com.save.protect.util.PermissionUtils.checkShowLocationPermission
 import com.save.protect.util.PermissionUtils.hasLocationPermission
 import com.save.protect.util.PermissionUtils.requestLocationPermission
-import com.save.protect.util.PermissionUtils.checkShowLocationPermission
 import com.save.protect.util.PermissionUtils.showLocationPermissionDialog
-import com.save.protect.R
 import java.util.*
 
 class ShareholderActivity : AppCompatActivity() {
@@ -31,19 +35,21 @@ class ShareholderActivity : AppCompatActivity() {
     private lateinit var locationCallback: LocationCallback
 
     private lateinit var mapView: MapView
-    private lateinit var naverMap: NaverMap
-    private lateinit var auth: FirebaseAuth
+    private var naverMap: NaverMap? = null
+
     private lateinit var button_invite: Button
+    private lateinit var checkboxAutoFocus: CheckBox
 
-    var marker = Marker()
-
+    private lateinit var userData: UserInfo
     private var uid: String? = null
+    private var isAutoFocus = true
+    private var marker = Marker()
+
 
     // 사용자 입력값
     private var setting_markLimit = 3
     private var setting_updateInterval = 10
     private var setting_minimunInterval = 3
-    private var setting_captionText = "유저*23#"
 
 
     // 위치 데이터를 저장하는 리스트 (제한된 길이 유지)
@@ -54,15 +60,20 @@ class ShareholderActivity : AppCompatActivity() {
         setContentView(R.layout.activity_shareholder)
         initializeMapView(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        setInitialValues()
+
         createLocationCallback()
 
         // 위치 권한 확인
         checkLocationPermission()
 
-        setInitialValues()
 
         button_invite.setOnClickListener {
             KakaoUtils.shareText(this, "위치공유 초대", "위치공유 초대가 왔습니다.", "${uid}")
+        }
+
+        checkboxAutoFocus.setOnCheckedChangeListener { buttonView, isChecked ->
+            isAutoFocus = isChecked
         }
 
     }
@@ -73,9 +84,11 @@ class ShareholderActivity : AppCompatActivity() {
         val markLimit = intent.getIntExtra("MARK_LIMIT", 3)
         val updateInterval = intent.getIntExtra("UPDATE_INTERVAL", 10)
         val minimumInterval = intent.getIntExtra("MINIMUM_INTERVAL", 3)
-        auth = Firebase.auth
-        uid = auth.currentUser?.uid
+        uid = UserManagement.uid
+        userData = UserManagement.getUserInfo()!!
 
+        Log.e("저장된유저 ", "${UserManagement.getUserInfo()}")
+        Log.e("저장된유저 ", UserManagement.uid)
 
 
         // 값이 null인 경우 처리
@@ -89,6 +102,7 @@ class ShareholderActivity : AppCompatActivity() {
     private fun initializeMapView(savedInstanceState: Bundle?) {
         mapView = findViewById(R.id.map_view)
         button_invite = findViewById(R.id.button_invite)
+        checkboxAutoFocus = findViewById(R.id.checkbox_autoFocus)
         mapView.onCreate(savedInstanceState)
     }
 
@@ -160,7 +174,7 @@ class ShareholderActivity : AppCompatActivity() {
 
     private fun createLocationCallback() {
         locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
+            override fun onLocationResult(locationResult: LocationResult) {
                 locationResult ?: return
                 for (location in locationResult.locations) {
                     // 위치 변경 시 작업
@@ -174,12 +188,14 @@ class ShareholderActivity : AppCompatActivity() {
     }
 
     @SuppressLint("MissingPermission")
-    fun startLocationUpdates(updateInterval: Long = 10000, minimunInterval: Long = 3000) {
+    fun startLocationUpdates(updateInterval: Long = 10000, minimumInterval: Long = 3000) {
         Log.d("위치 추적", "시작")
+//        Log.d("타이머 값들 : ", "$setting_markLimit / $updateInterval / $minimunInterval")
+
         if (hasLocationPermission(this)) {
             val locationRequest = LocationRequest()
             locationRequest.interval = updateInterval // 위치 업데이트 간격 (밀리초)
-            locationRequest.fastestInterval = minimunInterval // 가장 빠른 업데이트 간격 (밀리초)
+            locationRequest.fastestInterval = minimumInterval // 가장 빠른 업데이트 간격 (밀리초)
             locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
             fusedLocationClient.requestLocationUpdates(
@@ -195,25 +211,40 @@ class ShareholderActivity : AppCompatActivity() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
-
     // 지도에 마커 표시
     private fun setMapMarker(userLatitude: Double, userLongitude: Double) {
         mapView.getMapAsync { nMap ->
             naverMap = nMap
 
-            // 현재 줌 레벨 가져오기
-            val currentZoom = naverMap.cameraPosition.zoom
-
             val initialLatLng = LatLng(userLatitude, userLongitude)
             val cameraUpdate = CameraUpdate.scrollAndZoomTo(initialLatLng, 17.0).animate(
                 CameraAnimation.Fly
             )
-            naverMap.moveCamera(cameraUpdate)
+            if (isAutoFocus) {
+                naverMap!!.moveCamera(cameraUpdate)
+            }
 
 
             marker.position = initialLatLng
             marker.map = naverMap
-            marker.captionText = setting_captionText
+            if (userData.userName.isNotEmpty()) {
+                marker.captionText = userData.userName
+            } else {
+                marker.captionText = "익명의 유저"
+            }
+            if (userData.imageUrl.isNotEmpty()) {
+                // 마커 이미지를 URL에서 로드하여 설정
+                Log.d("이미지 주소", " ${userData.imageUrl}")
+                ImageUtils.loadBitmapFromUrl(this, userData.imageUrl) {
+                    marker.icon = OverlayImage.fromBitmap(
+                        // 이미지 리사이징
+                        ImageUtils.resizeAndCropToCircle(it!!, 100, 100, 3, Color.BLACK)
+                    )
+                }
+            } else {
+                marker.icon = MarkerIcons.BLACK
+                marker.iconTintColor = Color.LTGRAY
+            }
         }
     }
 }
