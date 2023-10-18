@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.*
@@ -36,6 +37,9 @@ class AudienceActivity : AppCompatActivity() {
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
     private lateinit var docId: String
+    private var isAutoFocus = true
+
+    private lateinit var checkboxAutoFocus: CheckBox
 
     // 경로선 객체
     private var pathOverlay = PathOverlay()
@@ -56,6 +60,9 @@ class AudienceActivity : AppCompatActivity() {
         // 위치 권한 확인
         checkLocationPermission()
 
+        checkboxAutoFocus.setOnCheckedChangeListener { buttonView, isChecked ->
+            isAutoFocus = isChecked
+        }
     }
 
     private fun initDocId() {
@@ -77,6 +84,7 @@ class AudienceActivity : AppCompatActivity() {
 
     private fun initializeMapView(savedInstanceState: Bundle?) {
         mapView = findViewById(R.id.map_view_audience)
+        checkboxAutoFocus = findViewById(R.id.checkbox_autoFocus_audience)
         mapView.onCreate(savedInstanceState)
     }
 
@@ -192,9 +200,6 @@ class AudienceActivity : AppCompatActivity() {
             Log.d("그리기용 정보 ", "$coords")
             if (coords.isNotEmpty()) {
                 val firstLatLng = coords[0]
-                val initialLatLng = LatLng(firstLatLng.latitude, firstLatLng.longitude)
-                val cameraUpdate =
-                    CameraUpdate.scrollAndZoomTo(initialLatLng, 17.0).animate(CameraAnimation.Fly)
 
                 if (coords.size > 2) {
                     // 경로선 좌표 설정
@@ -210,8 +215,7 @@ class AudienceActivity : AppCompatActivity() {
                 } else {
                     pathOverlay.map = null
                 }
-                // 카메라 이동
-                naverMap.moveCamera(cameraUpdate)
+
                 // 마커 찍기
                 setMapMarker(firstLatLng.latitude, firstLatLng.longitude)
 
@@ -234,7 +238,9 @@ class AudienceActivity : AppCompatActivity() {
             val cameraUpdate = CameraUpdate.scrollAndZoomTo(initialLatLng, 17.0).animate(
                 CameraAnimation.Fly
             )
-            naverMap.moveCamera(cameraUpdate)
+            if (isAutoFocus) {
+                naverMap.moveCamera(cameraUpdate)
+            }
 
             marker.position = initialLatLng
             marker.map = naverMap
