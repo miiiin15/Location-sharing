@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -41,9 +42,12 @@ class MainActivity : AppCompatActivity() {
         fetchUserInfo(auth.currentUser?.uid.toString())
 
         btn_userInfo.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
-
-            startActivity(intent)
+            if (UserManagement.isGuest) {
+                Toast.makeText(this, "비회원은 이용할 수 없습니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                val intent = Intent(this, ProfileActivity::class.java)
+                startActivity(intent)
+            }
         }
         btn_open.setOnClickListener {
             //긴급방 만들때 쓰기

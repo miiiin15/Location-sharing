@@ -18,7 +18,6 @@ import com.save.protect.data.UserManagement
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
-    private lateinit var auth: FirebaseAuth
     private lateinit var stateText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,14 +25,8 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
         stateText = findViewById(R.id.stateText)
 
-        // Initialize Firebase Auth
-        auth = Firebase.auth
-
-        // 리셋 먼저
+        // 유저 정보 초기화
         UserManagement.resetUserInfo()
-
-        // Kakao SDK 초기화
-//        KakaoSdk.init(this, "${R.string.kakao_native_key}")
         checkLocationPermission()
 
     }
@@ -57,30 +50,6 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-    private fun login() {
-        stateText.text = "로그인 중..."
-        auth.signInAnonymously()
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    val handler = Handler()
-
-                    handler.postDelayed({
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d("로그인", "signInAnonymously:success")
-                        next()
-                    }, 2000)
-                } else {
-                    stateText.text = "로그인 실패.!"
-                    // If sign in fails, display a message to the user.
-                    Log.w("로그인", "signInAnonymously:failure", task.exception)
-                    Toast.makeText(
-                        baseContext,
-                        "로그인 실패",
-                        Toast.LENGTH_SHORT,
-                    ).show()
-                }
-            }
-    }
 
     private fun next() {
         val intent = Intent(this, SigninActivity::class.java)

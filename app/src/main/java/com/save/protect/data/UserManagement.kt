@@ -5,10 +5,12 @@ class UserManagement {
 
         private var userInfo: UserInfo = UserInfo()
         var uid: String = ""
+        var isGuest = true
 
         fun resetUserInfo() {
             userInfo = UserInfo()
             uid = ""
+            isGuest = true
         }
 
         // 사용자 정보 설정
