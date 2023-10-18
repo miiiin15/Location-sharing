@@ -3,29 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="18dp">
+    android:paddingHorizontal="@dimen/padding_Horizon"
+    android:paddingVertical="@dimen/padding_Vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/editText"
-            android:layout_width="wrap_content"
+        <com.save.protect.custom.CustomInput
+            android:id="@+id/editText_invite"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
-            android:layout_weight="10"
+            android:layout_weight="1"
             android:hint="초대코드 입력"
             android:maxLength="40"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textSize="15sp" />
 
         <Button
             android:id="@+id/button_paste"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="붙여넣기" />
     </LinearLayout>
 

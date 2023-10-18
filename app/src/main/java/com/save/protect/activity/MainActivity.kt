@@ -6,13 +6,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.save.protect.R
+import com.save.protect.custom.CustomInput
+import com.save.protect.custom.IsValidListener
 import com.save.protect.data.UserManagement
 import com.save.protect.database.UserInfoManager
 import com.save.protect.util.ClipboardUtils
@@ -79,6 +80,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("MissingInflatedId")
     private fun showInputDialog() {
         val clipboardUtils = ClipboardUtils(this)
 
@@ -87,7 +89,7 @@ class MainActivity : AppCompatActivity() {
         val inflater = layoutInflater
         val dialogView = inflater.inflate(R.layout.dialog_audience, null)
 
-        val editText = dialogView.findViewById<EditText>(R.id.editText)
+        val editTextInvite = dialogView.findViewById<CustomInput>(R.id.editText_invite)
         val buttonPaste = dialogView.findViewById<Button>(R.id.button_paste)
         val buttonConfirm = dialogView.findViewById<Button>(R.id.button_confirm)
         val buttonCancel = dialogView.findViewById<Button>(R.id.button_cancel)
@@ -95,13 +97,19 @@ class MainActivity : AppCompatActivity() {
         builder.setView(dialogView)
         val dialog = builder.create()
 
+        editTextInvite.setIsValidListener(object : IsValidListener {
+            override fun isValid(text: String): Boolean {
+                return text.isNotEmpty()
+            }
+        })
+
         // 붙여넣기 버튼에 아무 동작을 넣지 않음
         buttonPaste.setOnClickListener {
-            copiedText.let { editText.setText(it) }
+            copiedText.let { editTextInvite.setText(it) }
         }
 
         buttonConfirm.setOnClickListener {
-            val userInput = editText.text.toString()
+            val userInput = editTextInvite.text.toString()
             if (userInput.length in 1..40) {
                 // 최대 40자 이내의 문자열이 입력된 경우에만 확인 버튼 동작 추가
                 val intent = Intent(this, AudienceActivity::class.java)
