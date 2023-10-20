@@ -7,6 +7,8 @@
     android:padding="16dp"
     tools:context=".activity.MainActivity">
 
+
+
     <Button
         android:id="@+id/button_userInfo"
         android:layout_width="0dp"
@@ -16,23 +18,36 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
 
-    <Button
-        android:id="@+id/button_open"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="만들기"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintTop_toBottomOf="@+id/button_userInfo"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="16dp">
 
-    <Button
-        android:id="@+id/button_enter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="입장하기"
-        app:layout_constraintTop_toBottomOf="@+id/button_open"
-        tools:ignore="MissingConstraints" />
+        <Button
+            android:id="@+id/button_open"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:textSize="15dp"
+            android:text="만들기"
+            tools:ignore="MissingConstraints" />
+
+        <Button
+            android:id="@+id/button_enter"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:textSize="15dp"
+            android:text="입장하기"
+            tools:ignore="MissingConstraints" />
+    </LinearLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
