@@ -23,11 +23,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvDuplicateStatus"
+    <CheckBox
+        android:id="@+id/checkBox_emailSave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="test"
+        android:text="아이디 저장"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextEmail" />
@@ -36,11 +36,12 @@
         android:id="@+id/editTextPassword"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:hint="비밀번호를 입력하세요"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDuplicateStatus" />
+        app:layout_constraintTop_toBottomOf="@+id/checkBox_emailSave" />
 
     <Button
         android:id="@+id/btnLogin"

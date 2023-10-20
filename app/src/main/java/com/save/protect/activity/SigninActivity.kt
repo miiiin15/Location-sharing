@@ -1,7 +1,9 @@
 package com.save.protect.activity
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -9,8 +11,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -19,9 +21,10 @@ import com.save.protect.R
 import com.save.protect.custom.CustomInput
 import com.save.protect.data.UserManagement
 import com.save.protect.database.AuthManager
-import com.save.protect.database.UserInfoManager
 
 class SigninActivity : BaseActivity() {
+
+    private lateinit var sharedPref: SharedPreferences
 
     private lateinit var outsideView: View
     private lateinit var editTextEmail: CustomInput
@@ -30,8 +33,11 @@ class SigninActivity : BaseActivity() {
     private lateinit var btnLogin: Button
     private lateinit var btnSignUp: Button
     private lateinit var btnGuestLogin: Button
+    private lateinit var checkBoxSave: CheckBox
 
     private lateinit var auth: FirebaseAuth
+
+    private var isSave = false
 
 
     @SuppressLint("MissingInflatedId", "ClickableViewAccessibility")
@@ -39,15 +45,7 @@ class SigninActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signin)
 
-        outsideView = findViewById(R.id.outsideView)
-        editTextEmail = findViewById(R.id.editTextEmail)
-        editTextPassword = findViewById(R.id.editTextPassword)
-
-        btnLogin = findViewById(R.id.btnLogin)
-        btnGuestLogin = findViewById(R.id.btnLogInGuest)
-        btnSignUp = findViewById(R.id.btnJoin)
-
-        auth = Firebase.auth
+        init()
 
         // 외부 뷰 터치 시 키보드 내리기와 포커스 해제
         outsideView.setOnTouchListener { _, event ->
@@ -60,6 +58,10 @@ class SigninActivity : BaseActivity() {
             true
         }
 
+        checkBoxSave.setOnCheckedChangeListener { buttonView, isChecked ->
+            isSave = isChecked
+        }
+
         btnLogin.setOnClickListener {
             val email = editTextEmail.text.toString().trim()
             val password = editTextPassword.text.toString().trim()
@@ -70,6 +72,9 @@ class SigninActivity : BaseActivity() {
                 AuthManager.loginFireBase(this, email, password) {
                     Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
                     UserManagement.isGuest = false
+                    if (isSave) {
+                        setStringSharedPref()
+                    }
                     loadingDialog.dismiss()
                     next()
                 }
@@ -86,6 +91,27 @@ class SigninActivity : BaseActivity() {
             startActivity(intent)
         }
 
+    }
+
+    private fun init() {
+        outsideView = findViewById(R.id.outsideView)
+        editTextEmail = findViewById(R.id.editTextEmail)
+        editTextPassword = findViewById(R.id.editTextPassword)
+        checkBoxSave = findViewById(R.id.checkBox_emailSave)
+
+        btnLogin = findViewById(R.id.btnLogin)
+        btnGuestLogin = findViewById(R.id.btnLogInGuest)
+        btnSignUp = findViewById(R.id.btnJoin)
+
+        auth = Firebase.auth
+        sharedPref = this.getSharedPreferences("mySharedPreferences", Context.MODE_PRIVATE)
+
+        val email = sharedPref.getString("savedEmail", "")
+        Log.d("이메일 저장된 값 ", ": $email")
+        if (email != null && email.isNotEmpty()) {
+            editTextEmail.setText(email)
+            checkBoxSave.isChecked = true
+        }
     }
 
     private fun guestLogin() {
@@ -109,6 +135,19 @@ class SigninActivity : BaseActivity() {
                     ).show()
                 }
             }
+    }
+
+    // 내부에 이메일값 저장
+    private fun setStringSharedPref() {
+        try {
+            val editor = sharedPref.edit()
+            val email = editTextEmail.text.toString().trim()
+            editor.putString("savedEmail", email)
+            editor.apply()
+            Log.d("이메일 저장 ", "성공 : $email")
+        } catch (e: Exception) {
+            Log.e("이메일 저장 ", "실패 ", e)
+        }
     }
 
     private fun next() {
