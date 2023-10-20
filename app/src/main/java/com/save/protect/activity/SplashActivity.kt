@@ -14,6 +14,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.save.protect.util.PermissionUtils
 import com.save.protect.R
+import com.save.protect.data.DocIdManagement
 import com.save.protect.data.UserManagement
 
 @SuppressLint("CustomSplashScreen")
@@ -27,6 +28,7 @@ class SplashActivity : AppCompatActivity() {
 
         // 유저 정보 초기화
         UserManagement.resetUserInfo()
+        initDocId()
         checkLocationPermission()
 
     }
@@ -47,6 +49,17 @@ class SplashActivity : AppCompatActivity() {
             else -> {
                 PermissionUtils.requestLocationPermission(this)
             }
+        }
+    }
+
+    private fun initDocId() {
+        // 딥링크로 들어온 경우 Intent에서 데이터 추출
+        val data = intent?.data
+        val deepLinkValue = data?.getQueryParameter("doc_id")
+
+        if (deepLinkValue != null) {
+            DocIdManagement.setReceivedId(deepLinkValue)
+            deepLinkValue.let { Log.d("딥링크 값", it.toString()) }
         }
     }
 

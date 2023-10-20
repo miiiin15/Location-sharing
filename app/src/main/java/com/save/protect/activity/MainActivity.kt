@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.save.protect.R
 import com.save.protect.custom.CustomInput
 import com.save.protect.custom.IsValidListener
+import com.save.protect.data.DocIdManagement
 import com.save.protect.data.UserManagement
 import com.save.protect.database.UserInfoManager
 import com.save.protect.util.ClipboardUtils
@@ -32,15 +33,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        checkReceivedId()
+        init()
 
-        btn_userInfo = findViewById(R.id.button_userInfo)
-        btn_open = findViewById(R.id.button_open)
-        btn_enter = findViewById(R.id.button_enter)
-
-        auth = Firebase.auth
-
-        // 유저 정보 초기화
-        fetchUserInfo(auth.currentUser?.uid.toString())
 
         btn_userInfo.setOnClickListener {
             if (UserManagement.isGuest) {
@@ -61,11 +56,27 @@ class MainActivity : AppCompatActivity() {
         btn_enter.setOnClickListener {
             // 버튼을 누르면 다이얼로그를 띄웁니다.
             showInputDialog()
-//            val intent = Intent(this, AudienceActivity::class.java)
-//            intent.putExtra("doc_id", "test1234")
-//            startActivity(intent)
-
         }
+    }
+
+    private fun init() {
+        btn_userInfo = findViewById(R.id.button_userInfo)
+        btn_open = findViewById(R.id.button_open)
+        btn_enter = findViewById(R.id.button_enter)
+
+        auth = Firebase.auth
+
+        // 유저 정보 초기화
+        fetchUserInfo(auth.currentUser?.uid.toString())
+    }
+
+    private fun checkReceivedId() {
+        val id = DocIdManagement.getReceivedId()
+        if (id != null && id.isNotEmpty()) {
+            Toast.makeText(this, "초대받은 세션으로 이동합니다.", Toast.LENGTH_SHORT).show()
+            enterAudience(id)
+        }
+        return
     }
 
     private fun fetchUserInfo(id: String = "") {
@@ -78,6 +89,12 @@ class MainActivity : AppCompatActivity() {
         } else {
             //TODO : 유저정보 저장실패 처리
         }
+    }
+
+    private fun enterAudience(input: String) {
+        val intent = Intent(this, AudienceActivity::class.java)
+        intent.putExtra("doc_id", input)
+        startActivity(intent)
     }
 
     @SuppressLint("MissingInflatedId")
@@ -112,11 +129,7 @@ class MainActivity : AppCompatActivity() {
             val userInput = editTextInvite.text.toString()
             if (userInput.length in 1..40) {
                 // 최대 40자 이내의 문자열이 입력된 경우에만 확인 버튼 동작 추가
-                val intent = Intent(this, AudienceActivity::class.java)
-
-                intent.putExtra("doc_id", userInput)
-
-                startActivity(intent)
+                enterAudience(userInput)
                 dialog.dismiss() // 다이얼로그 닫기
             } else {
                 // 40자를 초과한 경우
