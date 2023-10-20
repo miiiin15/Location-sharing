@@ -14,13 +14,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.save.protect.BaseActivity
 import com.save.protect.R
 import com.save.protect.custom.CustomInput
 import com.save.protect.data.UserManagement
 import com.save.protect.database.AuthManager
 import com.save.protect.database.UserInfoManager
 
-class SigninActivity : AppCompatActivity() {
+class SigninActivity : BaseActivity() {
 
     private lateinit var outsideView: View
     private lateinit var editTextEmail: CustomInput
@@ -65,9 +66,11 @@ class SigninActivity : AppCompatActivity() {
 
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
+                loadingDialog.show(supportFragmentManager, "")
                 AuthManager.loginFireBase(this, email, password) {
                     Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
                     UserManagement.isGuest = false
+                    loadingDialog.dismiss()
                     next()
                 }
             } else {
@@ -86,16 +89,19 @@ class SigninActivity : AppCompatActivity() {
     }
 
     private fun guestLogin() {
+        loadingDialog.show(supportFragmentManager, "")
         auth.signInAnonymously()
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val handler = Handler()
                     handler.postDelayed({
                         next()
+                        loadingDialog.dismiss()
                         Toast.makeText(this, "비회원 로그인 성공", Toast.LENGTH_SHORT).show()
                     }, 2000)
                 } else {
                     Log.w("로그인", "signInAnonymously:failure", task.exception)
+                    loadingDialog.dismiss()
                     Toast.makeText(
                         baseContext,
                         "로그인 실패",
