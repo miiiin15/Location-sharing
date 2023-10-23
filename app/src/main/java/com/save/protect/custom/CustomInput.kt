@@ -41,10 +41,11 @@ class CustomInput : AppCompatEditText {
         // 입력 중, 올바른 값, 올바르지 않은 값에 따라 밑줄 색상을 변경
         setOnFocusChangeListener { _, hasFocus ->
             val colorResId = if (hasFocus) {
-                R.color.primary // 입력 중
+
+                R.color.primary // 기본 값
             } else if (isValid() && !hasFocus) {
-                R.color.default_color // 올바른 값
-            } else if (isValid()) {
+                R.color.default_color // 기본 값
+            } else if (isValid() && hasFocus) {
                 R.color.primary // 올바른 값
             } else {
                 R.color.error // 올바르지 않은 값
@@ -62,14 +63,37 @@ class CustomInput : AppCompatEditText {
         }
     }
 
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        // 텍스트가 변경될 때 수행할 작업
+        val text = s.toString()
+        val colorResId = if (isValid(text)) {
+            if (hasFocus()) {
+                R.color.primary // 올바른 값
+            } else {
+                R.color.default_color // 올바른 값
+            }
+        } else {
+            R.color.error // 올바르지 않은 값
+        }
+        setUnderlineColor(ContextCompat.getColor(context, colorResId))
+    }
+
+//    }
+
     private var isValidListener: IsValidListener? = null
 
     fun setIsValidListener(listener: IsValidListener) {
         isValidListener = listener
     }
 
+    // 포커스용
     private fun isValid(): Boolean {
         val text = text.toString()
+        return isValidListener?.isValid(text) ?: text.isNotEmpty() // listener가 설정되지 않으면 항상 true로 가정
+    }
+
+    //값 변화 검사용
+    private fun isValid(text: String): Boolean {
         return isValidListener?.isValid(text) ?: text.isNotEmpty() // listener가 설정되지 않으면 항상 true로 가정
     }
 
