@@ -18,7 +18,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.save.protect.BaseActivity
 import com.save.protect.R
+import com.save.protect.custom.CustomButton
 import com.save.protect.custom.CustomInput
+import com.save.protect.custom.IsValidListener
 import com.save.protect.data.UserManagement
 import com.save.protect.database.AuthManager
 
@@ -30,7 +32,7 @@ class SigninActivity : BaseActivity() {
     private lateinit var editTextEmail: CustomInput
     private lateinit var editTextPassword: CustomInput
 
-    private lateinit var btnLogin: Button
+    private lateinit var btnLogin: CustomButton
     private lateinit var btnSignUp: Button
     private lateinit var btnGuestLogin: Button
     private lateinit var checkBoxSave: CheckBox
@@ -57,6 +59,20 @@ class SigninActivity : BaseActivity() {
             }
             true
         }
+
+
+        editTextEmail.setIsValidListener(object : IsValidListener {
+            override fun isValid(text: String): Boolean {
+                validButton()
+                return text.isNotEmpty()
+            }
+        })
+        editTextPassword.setIsValidListener(object : IsValidListener {
+            override fun isValid(text: String): Boolean {
+                validButton()
+                return text.isNotEmpty()
+            }
+        })
 
         checkBoxSave.setOnCheckedChangeListener { buttonView, isChecked ->
             isSave = isChecked
@@ -112,6 +128,15 @@ class SigninActivity : BaseActivity() {
             editTextEmail.setText(email)
             checkBoxSave.isChecked = true
         }
+        validButton()
+    }
+
+    // 이메일, 비번 검사
+    private fun validButton() {
+        val email = editTextEmail.text.toString().trim()
+        val password = editTextPassword.text.toString().trim()
+
+        btnLogin.setEnable(email.isNotEmpty() && password.isNotEmpty())
     }
 
     private fun guestLogin() {
