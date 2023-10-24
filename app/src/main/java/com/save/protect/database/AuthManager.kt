@@ -40,7 +40,13 @@ object AuthManager {
             }
     }
 
-    fun loginFireBase(context: Context, email: String, password: String, onSuccess: () -> Unit) {
+    fun loginFireBase(
+        context: Context,
+        email: String,
+        password: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
         val auth = FirebaseAuth.getInstance()
 
         auth.signInWithEmailAndPassword(email, password)
@@ -54,15 +60,14 @@ object AuthManager {
                     val exception = task.exception
                     if (exception is FirebaseAuthException) {
                         // Firebase Authentication 예외 처리
-                        Toast.makeText(
-                            context,
-                            "Firebase Authentication 오류: ${exception.errorCode}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        val errorMessage = "Firebase Authentication 오류: ${exception.errorCode}"
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                        onFailure(errorMessage)
                     } else {
                         // 기타 오류 처리
-                        Toast.makeText(context, "로그인 실패: ${exception?.message}", Toast.LENGTH_SHORT)
-                            .show()
+                        val errorMessage = "로그인 실패: ${exception?.message}"
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                        onFailure(errorMessage)
                     }
                 }
             }

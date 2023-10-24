@@ -82,18 +82,25 @@ class SigninActivity : BaseActivity() {
             val email = editTextEmail.text.toString().trim()
             val password = editTextPassword.text.toString().trim()
 
-
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 loadingDialog.show(supportFragmentManager, "")
-                AuthManager.loginFireBase(this, email, password) {
-                    Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
-                    UserManagement.isGuest = false
-                    if (isSave) {
-                        setStringSharedPref()
+                AuthManager.loginFireBase(this, email, password,
+                    onSuccess = {
+                        // 로그인 성공
+                        Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
+                        UserManagement.isGuest = false
+                        if (isSave) {
+                            setStringSharedPref()
+                        }
+                        loadingDialog.dismiss()
+                        next()
+                    },
+                    onFailure = { errorMessage ->
+                        // 로그인 실패 시 수행할 동작
+                        loadingDialog.dismiss()
+                        Toast.makeText(this, "로그인 실패 $errorMessage", Toast.LENGTH_SHORT).show()
                     }
-                    loadingDialog.dismiss()
-                    next()
-                }
+                )
             } else {
                 Toast.makeText(this, "아이디 비밀번호를 확인해주세요", Toast.LENGTH_SHORT).show()
             }
