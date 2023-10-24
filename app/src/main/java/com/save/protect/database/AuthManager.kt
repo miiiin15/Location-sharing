@@ -7,19 +7,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.google.android.gms.tasks.Task
 
 object AuthManager {
 
     private val auth = Firebase.auth
-
-    // id 중복확인
-    fun checkEmailDuplication(email: String): Task<*> {
-        val auth = FirebaseAuth.getInstance()
-
-        // Firebase Authentication을 사용하여 이메일 중복 확인
-        return auth.fetchSignInMethodsForEmail(email)
-    }
 
     // 회원가입
     fun signUpFireBase(email: String?, password: String?, onSuccess: () -> Unit) {
