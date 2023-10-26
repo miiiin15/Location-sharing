@@ -7,10 +7,11 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.save.protect.BaseActivity
 import com.save.protect.R
 import com.save.protect.custom.CustomInput
 import com.save.protect.custom.IsValidListener
@@ -19,7 +20,8 @@ import com.save.protect.data.UserManagement
 import com.save.protect.database.UserInfoManager
 import com.save.protect.util.ClipboardUtils
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
+
 
     private lateinit var btn_userInfo: Button
     private lateinit var btn_open: Button
@@ -35,7 +37,6 @@ class MainActivity : AppCompatActivity() {
 
         checkReceivedId()
         init()
-
 
         btn_userInfo.setOnClickListener {
             if (UserManagement.isGuest) {
@@ -68,6 +69,8 @@ class MainActivity : AppCompatActivity() {
 
         // 유저 정보 초기화
         fetchUserInfo(auth.currentUser?.uid.toString())
+
+
     }
 
     private fun checkReceivedId() {

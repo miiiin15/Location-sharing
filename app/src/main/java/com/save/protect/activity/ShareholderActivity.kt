@@ -5,10 +5,11 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
-import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.*
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate
@@ -17,6 +18,7 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.MarkerIcons
+import com.save.protect.BaseActivity
 import com.save.protect.R
 import com.save.protect.data.UserInfo
 import com.save.protect.data.UserManagement
@@ -29,13 +31,15 @@ import com.save.protect.util.PermissionUtils.requestLocationPermission
 import com.save.protect.util.PermissionUtils.showLocationPermissionDialog
 import java.util.*
 
-class ShareholderActivity : AppCompatActivity() {
+class ShareholderActivity : BaseActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
+    private lateinit var bottomSheet: View
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
 
     private lateinit var mapView: MapView
-    private var naverMap: NaverMap? = null
+    private lateinit var naverMap: NaverMap
 
     private lateinit var button_invite: Button
     private lateinit var checkboxAutoFocus: CheckBox
@@ -61,6 +65,7 @@ class ShareholderActivity : AppCompatActivity() {
         initializeMapView(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         setInitialValues()
+        initBottomSheet()
 
         createLocationCallback()
 
@@ -78,33 +83,6 @@ class ShareholderActivity : AppCompatActivity() {
 
     }
 
-
-    private fun setInitialValues() {
-        // Intent로 전달받은 설정 값을 읽어옵니다.
-        val markLimit = intent.getIntExtra("MARK_LIMIT", 3)
-        val updateInterval = intent.getIntExtra("UPDATE_INTERVAL", 10)
-        val minimumInterval = intent.getIntExtra("MINIMUM_INTERVAL", 3)
-        uid = UserManagement.uid
-        userData = UserManagement.getUserInfo()!!
-
-        Log.e("저장된유저 ", "${UserManagement.getUserInfo()}")
-        Log.e("저장된유저 ", UserManagement.uid)
-
-
-        // 값이 null인 경우 처리
-        if (markLimit != 0 || updateInterval != 0 || minimumInterval != 0) {
-            setting_markLimit = markLimit
-            setting_minimunInterval = minimumInterval
-            setting_updateInterval = updateInterval
-        }
-    }
-
-    private fun initializeMapView(savedInstanceState: Bundle?) {
-        mapView = findViewById(R.id.map_view)
-        button_invite = findViewById(R.id.button_invite)
-        checkboxAutoFocus = findViewById(R.id.checkbox_autoFocus)
-        mapView.onCreate(savedInstanceState)
-    }
 
     override fun onStart() {
         super.onStart()
@@ -141,6 +119,68 @@ class ShareholderActivity : AppCompatActivity() {
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
+    }
+
+    // 바텀시트 초기화
+    private fun initBottomSheet() {
+        bottomSheet = findViewById(R.id.bottom_sheet_chat)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            // bottom sheet의 상태값 변경
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                Log.d("바텀시트", " $newState")
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                    }
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                    }
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                    }
+                    BottomSheetBehavior.STATE_DRAGGING -> {
+                    }
+                    BottomSheetBehavior.STATE_SETTLING -> {
+                    }
+                    BottomSheetBehavior.STATE_HALF_EXPANDED -> {
+                    }
+                }
+
+            }
+
+            // BottomSheet가 스크롤될 때 호출
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+            }
+        }
+        )
+
+    }
+
+    private fun setInitialValues() {
+        // Intent로 전달받은 설정 값을 읽어옵니다.
+        val markLimit = intent.getIntExtra("MARK_LIMIT", 3)
+        val updateInterval = intent.getIntExtra("UPDATE_INTERVAL", 10)
+        val minimumInterval = intent.getIntExtra("MINIMUM_INTERVAL", 3)
+        uid = UserManagement.uid
+        userData = UserManagement.getUserInfo()!!
+
+        Log.e("저장된유저 ", "${UserManagement.getUserInfo()}")
+        Log.e("저장된유저 ", UserManagement.uid)
+
+        // 값이 null인 경우 처리
+        if (markLimit != 0 || updateInterval != 0 || minimumInterval != 0) {
+            setting_markLimit = markLimit
+            setting_minimunInterval = minimumInterval
+            setting_updateInterval = updateInterval
+        }
+    }
+
+    private fun initializeMapView(savedInstanceState: Bundle?) {
+        mapView = findViewById(R.id.map_view)
+        button_invite = findViewById(R.id.button_invite)
+        checkboxAutoFocus = findViewById(R.id.checkbox_autoFocus)
+        mapView.onCreate(savedInstanceState)
     }
 
     // 위치 권한 확인
