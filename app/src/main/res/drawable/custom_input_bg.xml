@@ -3,7 +3,7 @@
     <!-- 백그라운드 색 -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@android:color/white" />
+<!--            <solid android:color="@android:color/white" />-->
 <!--            <corners android:radius="10dp" />-->
 <!--            <stroke-->
 <!--                android:id="@+id/underLine"-->
