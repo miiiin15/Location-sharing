@@ -20,6 +20,7 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.MarkerIcons
 import com.save.protect.BaseActivity
 import com.save.protect.R
+import com.save.protect.custom.BottomSheetChat
 import com.save.protect.data.UserInfo
 import com.save.protect.data.UserManagement
 import com.save.protect.database.LocationTransmitter
@@ -35,8 +36,6 @@ class ShareholderActivity : BaseActivity() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
-    private lateinit var bottomSheet: View
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
 
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
@@ -65,7 +64,29 @@ class ShareholderActivity : BaseActivity() {
         initializeMapView(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         setInitialValues()
-        initBottomSheet()
+        BottomSheetChat.initBottomSheet(
+            findViewById(R.id.bottom_sheet_chat),
+            onChange = { bttomSheet, newState ->
+                Log.d("바텀시트 newState : ", " $newState")
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                    }
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                    }
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                    }
+                    BottomSheetBehavior.STATE_DRAGGING -> {
+                    }
+                    BottomSheetBehavior.STATE_SETTLING -> {
+                    }
+                    BottomSheetBehavior.STATE_HALF_EXPANDED -> {
+                    }
+                }
+            },
+            onSlide = { bttomSheet, slideOffset ->
+//                Log.d("바텀시트 slideOffset : ", " $slideOffset")
+            }
+        )
 
         createLocationCallback()
 
@@ -121,41 +142,6 @@ class ShareholderActivity : BaseActivity() {
         mapView.onLowMemory()
     }
 
-    // 바텀시트 초기화
-    private fun initBottomSheet() {
-        bottomSheet = findViewById(R.id.bottom_sheet_chat)
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-
-        bottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-            // bottom sheet의 상태값 변경
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                Log.d("바텀시트", " $newState")
-                when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                    }
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                    }
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                    }
-                    BottomSheetBehavior.STATE_DRAGGING -> {
-                    }
-                    BottomSheetBehavior.STATE_SETTLING -> {
-                    }
-                    BottomSheetBehavior.STATE_HALF_EXPANDED -> {
-                    }
-                }
-
-            }
-
-            // BottomSheet가 스크롤될 때 호출
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-
-            }
-        }
-        )
-
-    }
 
     private fun setInitialValues() {
         // Intent로 전달받은 설정 값을 읽어옵니다.

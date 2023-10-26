@@ -5,8 +5,16 @@
     android:id="@+id/bottom_sheet_chat"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:behavior_peekHeight="30dp"
+    app:behavior_peekHeight="100dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <View
+        android:id="@+id/sheet_header"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView_sheet_title"
@@ -18,13 +26,12 @@
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/sheet_header" />
 
     <View
         android:id="@+id/sheet_view"
         android:layout_width="0dp"
         android:layout_height="500dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_sheet_title" />
@@ -34,7 +41,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="채팅을 입력해주세요."
-        app:layout_constraintTop_toBottomOf="@+id/sheet_view"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/sheet_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

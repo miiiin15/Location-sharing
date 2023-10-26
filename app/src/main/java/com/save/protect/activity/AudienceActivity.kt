@@ -9,6 +9,7 @@ import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.*
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.firestore.ListenerRegistration
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
@@ -20,6 +21,7 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.overlay.PathOverlay
 import com.naver.maps.map.util.MarkerIcons
 import com.save.protect.R
+import com.save.protect.custom.BottomSheetChat
 import com.save.protect.data.LocationData
 import com.save.protect.data.UserInfo
 import com.save.protect.database.LocationReceiver
@@ -59,6 +61,29 @@ class AudienceActivity : AppCompatActivity() {
         initDocId()
         // 위치 권한 확인
         checkLocationPermission()
+        BottomSheetChat.initBottomSheet(
+            findViewById(R.id.bottom_sheet_chat),
+            onChange = { bttomSheet, newState ->
+                Log.d("바텀시트 newState : ", " $newState")
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                    }
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                    }
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                    }
+                    BottomSheetBehavior.STATE_DRAGGING -> {
+                    }
+                    BottomSheetBehavior.STATE_SETTLING -> {
+                    }
+                    BottomSheetBehavior.STATE_HALF_EXPANDED -> {
+                    }
+                }
+            },
+            onSlide = { bttomSheet, slideOffset ->
+//                Log.d("바텀시트 slideOffset : ", " $slideOffset")
+            }
+        )
 
         checkboxAutoFocus.setOnCheckedChangeListener { buttonView, isChecked ->
             isAutoFocus = isChecked
