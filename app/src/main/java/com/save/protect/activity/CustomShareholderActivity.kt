@@ -3,51 +3,52 @@ package com.save.protect.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.save.protect.R
 import com.save.protect.custom.CustomInput
 import com.save.protect.custom.IsValidListener
+import com.save.protect.databinding.ActivityCustomShareholderBinding
 
 
 class CustomShareholderActivity : AppCompatActivity() {
 
-    private lateinit var editTextMarkLimit: CustomInput
-    private lateinit var editTextUpdateInterval: CustomInput
-    private lateinit var editTextMinimumInterval: CustomInput
+    private lateinit var binding: ActivityCustomShareholderBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_custom_shareholder)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_custom_shareholder)
 
-        editTextMarkLimit = findViewById(R.id.editText_markLimit)
-        editTextUpdateInterval = findViewById(R.id.editText_updateInterval)
-        editTextMinimumInterval = findViewById(R.id.editText_minimumInterval)
-
-        editTextMarkLimit.setIsValidListener(object : IsValidListener {
+        // TODO : 값검사 에러 return 컴포넌트 내부기능으로 만들기
+        // TODO : toInt 때문에 발생하는 NumberFormatException 개선하기
+        binding.editTextMarkLimit.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
                 return text.isNotEmpty() && text.toInt() in 1..10
             }
         })
 
-        editTextUpdateInterval.setIsValidListener(object : IsValidListener {
+        binding.editTextUpdateInterval.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
                 return text.isNotEmpty() && text.toInt() in 1..60
             }
         })
 
-        editTextMinimumInterval.setIsValidListener(object : IsValidListener {
+        binding.editTextMinimumInterval.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
                 return text.isNotEmpty() && text.toInt() in 1..60
             }
         })
+
+        binding.textViewMarkLimit.text = binding.editTextMarkLimit.text.toString()
+
 
         val buttonOpenNextScreen: Button = findViewById(R.id.button_openNextScreen)
         buttonOpenNextScreen.setOnClickListener {
-            val markLimitText = editTextMarkLimit.text.toString()
-            val updateIntervalText = editTextUpdateInterval.text.toString()
-            val minimumIntervalText = editTextMinimumInterval.text.toString()
+            val markLimitText = binding.editTextMarkLimit.text.toString()
+            val updateIntervalText = binding.editTextUpdateInterval.text.toString()
+            val minimumIntervalText = binding.editTextMinimumInterval.text.toString()
 
             // 입력 값 검증
             if (isValidInput(markLimitText, updateIntervalText, minimumIntervalText)) {
