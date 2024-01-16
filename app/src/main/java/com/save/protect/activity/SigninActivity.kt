@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -22,20 +23,16 @@ import com.save.protect.custom.CustomButton
 import com.save.protect.custom.CustomInput
 import com.save.protect.custom.IsValidListener
 import com.save.protect.data.UserManagement
+import com.save.protect.data.auth.repo.SignInRepo
+import com.save.protect.data.test.repo.TestRepo
 import com.save.protect.database.AuthManager
+import com.save.protect.databinding.ActivitySigninBinding
 
 class SigninActivity : BaseActivity() {
 
+    private lateinit var binding: ActivitySigninBinding
     private lateinit var sharedPref: SharedPreferences
 
-    private lateinit var outsideView: View
-    private lateinit var editTextEmail: CustomInput
-    private lateinit var editTextPassword: CustomInput
-
-    private lateinit var btnLogin: CustomButton
-    private lateinit var btnSignUp: Button
-    private lateinit var btnGuestLogin: Button
-    private lateinit var checkBoxSave: CheckBox
 
     private lateinit var auth: FirebaseAuth
 
@@ -45,42 +42,42 @@ class SigninActivity : BaseActivity() {
     @SuppressLint("MissingInflatedId", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_signin)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_signin)
 
         init()
 
         // 외부 뷰 터치 시 키보드 내리기와 포커스 해제
-        outsideView.setOnTouchListener { _, event ->
+        binding.outsideView.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(outsideView.windowToken, 0)
-                editTextEmail.clearFocus()
-                editTextPassword.clearFocus()
+                imm.hideSoftInputFromWindow(binding.outsideView.windowToken, 0)
+                binding.editTextEmail.clearFocus()
+                binding.editTextPassword.clearFocus()
             }
             true
         }
 
 
-        editTextEmail.setIsValidListener(object : IsValidListener {
+        binding.editTextEmail.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
                 validButton()
                 return text.isNotEmpty()
             }
         })
-        editTextPassword.setIsValidListener(object : IsValidListener {
+        binding.editTextPassword.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
                 validButton()
                 return text.isNotEmpty()
             }
         })
 
-        checkBoxSave.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.checkBoxEmailSave.setOnCheckedChangeListener { buttonView, isChecked ->
             isSave = isChecked
         }
 
-        btnLogin.setOnClickListener {
-            val email = editTextEmail.text.toString().trim()
-            val password = editTextPassword.text.toString().trim()
+        binding.btnLogin.setOnClickListener {
+            val email = binding.editTextEmail.text.toString().trim()
+            val password = binding.editTextPassword.text.toString().trim()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 loadingDialog.show(supportFragmentManager, "")
@@ -106,10 +103,10 @@ class SigninActivity : BaseActivity() {
             }
         }
 
-        btnGuestLogin.setOnClickListener {
+        binding.btnLogInGuest.setOnClickListener {
             guestLogin()
         }
-        btnSignUp.setOnClickListener {
+        binding.btnJoin.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
         }
@@ -117,14 +114,6 @@ class SigninActivity : BaseActivity() {
     }
 
     private fun init() {
-        outsideView = findViewById(R.id.outsideView)
-        editTextEmail = findViewById(R.id.editTextEmail)
-        editTextPassword = findViewById(R.id.editTextPassword)
-        checkBoxSave = findViewById(R.id.checkBox_emailSave)
-
-        btnLogin = findViewById(R.id.btnLogin)
-        btnGuestLogin = findViewById(R.id.btnLogInGuest)
-        btnSignUp = findViewById(R.id.btnJoin)
 
         auth = Firebase.auth
         sharedPref = this.getSharedPreferences("mySharedPreferences", Context.MODE_PRIVATE)
@@ -132,18 +121,18 @@ class SigninActivity : BaseActivity() {
         val email = sharedPref.getString("savedEmail", "")
         Log.d("이메일 저장된 값 ", ": $email")
         if (email != null && email.isNotEmpty()) {
-            editTextEmail.setText(email)
-            checkBoxSave.isChecked = true
+            binding.editTextEmail.setText(email)
+            binding.checkBoxEmailSave.isChecked = true
         }
         validButton()
     }
 
     // 이메일, 비번 검사
     private fun validButton() {
-        val email = editTextEmail.text.toString().trim()
-        val password = editTextPassword.text.toString().trim()
+        val email = binding.editTextEmail.text.toString().trim()
+        val password = binding.editTextPassword.text.toString().trim()
 
-        btnLogin.setEnable(email.isNotEmpty() && password.isNotEmpty())
+        binding.btnLogin.setEnable(email.isNotEmpty() && password.isNotEmpty())
     }
 
     private fun guestLogin() {
@@ -169,11 +158,35 @@ class SigninActivity : BaseActivity() {
             }
     }
 
+    private fun getSupportPopup() {
+        val email = binding.editTextEmail.text.toString().trim()
+        val password = binding.editTextPassword.text.toString().trim()
+
+        SignInRepo.signIn(
+            email,
+            password,
+            success = {
+                loadingDialog.dismiss()
+                Log.d("TEST : ", "$it")
+//
+            },
+            failure = {
+                loadingDialog.dismiss()
+                Log.d("TEST failure : ", "$it")
+//                alertDlg(it.message.toString())
+            },
+            networkFail = {
+                Log.d("TEST networkFail : ", "$it")
+                loadingDialog.dismiss()
+//                alertDlg(it)
+            })
+    }
+
     // 내부에 이메일값 저장
     private fun setStringSharedPref() {
         try {
             val editor = sharedPref.edit()
-            val email = editTextEmail.text.toString().trim()
+            val email = binding.editTextEmail.text.toString().trim()
             editor.putString("savedEmail", email)
             editor.apply()
             Log.d("이메일 저장 ", "성공 : $email")

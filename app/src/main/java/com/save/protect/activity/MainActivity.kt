@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.databinding.DataBindingUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -18,27 +19,25 @@ import com.save.protect.custom.IsValidListener
 import com.save.protect.data.DocIdManagement
 import com.save.protect.data.UserManagement
 import com.save.protect.database.UserInfoManager
+import com.save.protect.databinding.ActivityMainBinding
 import com.save.protect.util.ClipboardUtils
 
 class MainActivity : BaseActivity() {
 
-
-    private lateinit var btn_userInfo: Button
-    private lateinit var btn_open: Button
-    private lateinit var btn_enter: Button
-
+    private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
 
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
 
         checkReceivedId()
         init()
 
-        btn_userInfo.setOnClickListener {
+        binding.buttonUserInfo.setOnClickListener {
             if (UserManagement.isGuest) {
                 Toast.makeText(this, "비회원은 이용할 수 없습니다.", Toast.LENGTH_SHORT).show()
             } else {
@@ -46,7 +45,7 @@ class MainActivity : BaseActivity() {
                 startActivity(intent)
             }
         }
-        btn_open.setOnClickListener {
+        binding.buttonOpen.setOnClickListener {
             //긴급방 만들때 쓰기
             //val intent = Intent(this, ShareholderActivity::class.java)
             val intent = Intent(this, CustomShareholderActivity::class.java)
@@ -54,17 +53,13 @@ class MainActivity : BaseActivity() {
             startActivity(intent)
         }
 
-        btn_enter.setOnClickListener {
+        binding.buttonEnter.setOnClickListener {
             // 버튼을 누르면 다이얼로그를 띄웁니다.
             showInputDialog()
         }
     }
 
     private fun init() {
-        btn_userInfo = findViewById(R.id.button_userInfo)
-        btn_open = findViewById(R.id.button_open)
-        btn_enter = findViewById(R.id.button_enter)
-
         auth = Firebase.auth
 
         // 유저 정보 초기화

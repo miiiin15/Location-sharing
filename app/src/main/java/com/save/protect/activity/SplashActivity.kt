@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -16,15 +17,15 @@ import com.save.protect.util.PermissionUtils
 import com.save.protect.R
 import com.save.protect.data.DocIdManagement
 import com.save.protect.data.UserManagement
+import com.save.protect.databinding.ActivitySplashBinding
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
-    private lateinit var stateText: TextView
+    private lateinit var binding: ActivitySplashBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
-        stateText = findViewById(R.id.stateText)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_splash)
 
         // 유저 정보 초기화
         UserManagement.resetUserInfo()
@@ -32,7 +33,6 @@ class SplashActivity : AppCompatActivity() {
         checkLocationPermission()
 
     }
-
 
     // 위치 권한 확인
     private fun checkLocationPermission() {
