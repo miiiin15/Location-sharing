@@ -33,7 +33,7 @@ object NetworkService {
 
     private fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
         .run {
-            addInterceptor(AddInterceptor())
+//            addInterceptor(AddInterceptor())
             addInterceptor(ReceiveInterceptor())
             addInterceptor(httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC))
             connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
