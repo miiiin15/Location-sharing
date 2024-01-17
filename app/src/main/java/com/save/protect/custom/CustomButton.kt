@@ -6,28 +6,72 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import com.save.protect.R
 
+enum class ButtonType {
+    PRIYMARY,
+    WHITE,
+    GREY
+}
 
-class CustomButton : AppCompatButton {
+class CustomButton @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = android.R.attr.buttonStyle
+) : AppCompatButton(context, attrs, defStyleAttr) {
 
-    // 생성자
-    constructor(context: Context) : super(context) {
-        init()
+    private var buttonType: ButtonType = ButtonType.PRIYMARY
+
+    init {
+        init(attrs)
+        context.theme.obtainStyledAttributes(attrs, R.styleable.CustomButton, 0, 0).apply {
+            try {
+                val type = getString(R.styleable.CustomButton_buttonType) ?: "NORMAL"
+                val buttonType = runCatching { enumValueOf<ButtonType>(type.toUpperCase()) }
+                    .getOrElse { ButtonType.PRIYMARY }
+
+                setButtonType(buttonType)
+            } finally {
+                recycle()
+            }
+        }
     }
 
-    // XML에서 사용할 때 호출되는 생성자
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        init()
+    private fun init(attrs: AttributeSet?) {
+        attrs?.let {
+            val typedArray = context.obtainStyledAttributes(it, R.styleable.CustomButton)
+            val textValue = typedArray.getString(R.styleable.CustomButton_android_text)
+            typedArray.recycle()
+
+            // 텍스트 설정
+            setTextStyle(textValue)
+        }
+        applyButtonDesign()
     }
 
-    private fun init() {
-        text = "확인"
-        background = ContextCompat.getDrawable(context, R.drawable.custom_button_selector)
-        setTextColor(ContextCompat.getColor(context, R.color.white))
+
+    private fun setTextStyle(textValue: String?) {
+        text = textValue ?: "확인"
+        textSize = 16F
     }
 
-    // isEnable 속성을 설정하는 함수
     fun setEnable(isEnabled: Boolean) {
         this.isEnabled = isEnabled
     }
 
+    fun setButtonType(type: ButtonType) {
+        buttonType = type
+        applyButtonDesign()
+    }
+
+    private fun applyButtonDesign() {
+        when (buttonType) {
+            ButtonType.PRIYMARY -> {
+                background = ContextCompat.getDrawable(context, R.drawable.custom_button_selector)
+                setTextColor(ContextCompat.getColor(context, R.color.white))
+            }
+            else -> {
+                background = ContextCompat.getDrawable(context, R.drawable.custom_button_selector)
+                setTextColor(ContextCompat.getColor(context, R.color.white))
+            }
+        }
+    }
 }
