@@ -1,51 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingHorizontal="@dimen/padding_Horizon"
-    tools:context=".activity.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <Button
-        android:id="@+id/button_userInfo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="프로필"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
+    <data>
 
-    <LinearLayout
+        <variable
+            name="main"
+            type="com.save.protect.activity.MainActivity" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_userInfo"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="16dp">
+        android:layout_height="match_parent"
+        android:paddingHorizontal="@dimen/padding_Horizon"
+        tools:context=".activity.MainActivity">
 
         <Button
-            android:id="@+id/button_open"
-            android:layout_width="wrap_content"
-            android:layout_height="100dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:text="만들기"
-            android:textSize="15dp"
+            android:id="@+id/button_userInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="프로필"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints" />
 
-        <Button
-            android:id="@+id/button_enter"
-            android:layout_width="wrap_content"
-            android:layout_height="100dp"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="1"
-            android:text="입장하기"
-            android:textSize="15dp"
-            tools:ignore="MissingConstraints" />
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_userInfo"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="16dp">
+
+            <Button
+                android:id="@+id/button_open"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:text="만들기"
+                android:textSize="15dp"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/button_enter"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:text="입장하기"
+                android:textSize="15dp"
+                tools:ignore="MissingConstraints" />
+        </LinearLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
