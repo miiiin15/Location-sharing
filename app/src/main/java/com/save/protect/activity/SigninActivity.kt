@@ -158,30 +158,6 @@ class SigninActivity : BaseActivity() {
             }
     }
 
-    private fun getSupportPopup() {
-        val email = binding.editTextEmail.text.toString().trim()
-        val password = binding.editTextPassword.text.toString().trim()
-
-        SignInRepo.signIn(
-            email,
-            password,
-            success = {
-                loadingDialog.dismiss()
-                Log.d("TEST : ", "$it")
-//
-            },
-            failure = {
-                loadingDialog.dismiss()
-                Log.d("TEST failure : ", "$it")
-//                alertDlg(it.message.toString())
-            },
-            networkFail = {
-                Log.d("TEST networkFail : ", "$it")
-                loadingDialog.dismiss()
-//                alertDlg(it)
-            })
-    }
-
     // 내부에 이메일값 저장
     private fun setStringSharedPref() {
         try {

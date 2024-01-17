@@ -41,7 +41,6 @@ class CustomShareholderActivity : AppCompatActivity() {
             }
         })
 
-        binding.textViewMarkLimit.text = binding.editTextMarkLimit.text.toString()
 
 
         val buttonOpenNextScreen: Button = findViewById(R.id.button_openNextScreen)
