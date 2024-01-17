@@ -10,51 +10,40 @@ import java.util.*
 
 class Logcat {
     companion object {
+        // 로그의 태그로 사용될 상수
         const val TAG: String = "PROTECT"
 
+        // 디버그 로그 출력
         fun d(message: String) {
             Log.d(TAG, buildLogMessage(message))
         }
 
-
+        // 에러 로그 출력
         fun e(message: String) {
             Log.e(TAG, buildLogMessage(message))
         }
 
-
+        // 정보 로그 출력
         fun i(message: String) {
             Log.i(TAG, buildLogMessage(message))
         }
 
-
-        fun w(message: String, exception: Exception?) {
+        // 경고 로그 출력
+        fun w(message: String, exception: Exception? = null) {
             Log.w(TAG, buildLogMessage(message))
+            exception?.let { Log.w(TAG, it) }
         }
 
-
+        // 상세 로그 출력
         fun v(message: String) {
             Log.v(TAG, buildLogMessage(message))
         }
 
-
+        // 로그 메시지 구성
         private fun buildLogMessage(message: String): String {
-
-//            try {
-//                val packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
-//
-//
-//                for(signature in packageInfo.signatures) {
-//                    val md = MessageDigest.getInstance("SHA")
-//                    md.update(signature.toByteArray())
-//                    Logcat.d("KeyHash: "+ Base64.encodeToString(md.digest(), Base64.DEFAULT))
-//
-//                }
-//            } catch (e: PackageManager.NameNotFoundException) {
-//                e.printStackTrace()
-//            }
-
             val ste = Thread.currentThread().stackTrace[4]
             val sb = StringBuilder()
+
             sb.append("[")
             sb.append(ste.fileName)
             sb.append("] ")
@@ -68,6 +57,7 @@ class Logcat {
             return sb.toString()
         }
 
+        // 로그를 파일로 저장
         private fun writeLog(str: String) {
             var result = 0
             val dirPath = Environment.getExternalStorageDirectory().absolutePath + "/log/$TAG/"
@@ -97,9 +87,7 @@ class Logcat {
                 result = 1
                 e.printStackTrace()
             }
-
         }
     }
-
-
 }
+
