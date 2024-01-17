@@ -1,26 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?><!-- res/drawable/custom_input_bg.xml -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- 백그라운드 색 -->
-    <item>
+
+    <!-- 배경 색상 및 밑줄 설정 -->
+    <item android:id="@+id/underLineContainer"> <!-- 변경된 부분 -->
         <shape android:shape="rectangle">
-<!--            <solid android:color="@android:color/white" />-->
-<!--            <corners android:radius="10dp" />-->
-<!--            <stroke-->
-<!--                android:id="@+id/underLine"-->
-<!--                android:width="2dp"-->
-<!--                android:color="@color/default_color" />-->
+            <solid android:color="@color/white" />
+            <stroke
+                android:width="2dp"
+                android:color="@color/default_color" />
         </shape>
     </item>
-    <!-- 밑줄 디자인 추가 -->
-        <item
-            android:id="@+id/underLine"
-            android:left="-10dp"
-            android:right="-10dp"
-            android:top="40dp">
-            <shape android:shape="rectangle">
-                <solid android:color="@color/default_color" />
-                <size android:height="0.1dp" />
-            </shape>
-        </item>
 
 </layer-list>
