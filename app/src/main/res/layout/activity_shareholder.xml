@@ -8,7 +8,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="30dp">
 
         <com.naver.maps.map.MapView
             android:id="@+id/map_view"
@@ -16,15 +17,31 @@
             android:layout_height="match_parent"
             tools:ignore="MissingConstraints" />
 
-        <Button
+        <ImageButton
+            android:id="@+id/button_share"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="@dimen/padding_Vertical"
+            android:layout_marginRight="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="초대코드 복사"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_share"
+            app:layout_constraintEnd_toStartOf="@+id/button_invite"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
             android:id="@+id/button_invite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginTop="@dimen/padding_Vertical"
             android:layout_marginEnd="@dimen/padding_Horizon"
-            android:text="초대"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="카카오톡 초대"
+            android:src="@drawable/icon_kakao"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
 
         <CheckBox
             android:id="@+id/checkbox_autoFocus"

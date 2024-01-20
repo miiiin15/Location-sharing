@@ -1,13 +1,15 @@
 package com.save.protect.activity
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.Button
 import android.widget.CheckBox
+import android.widget.ImageButton
 import com.google.android.gms.location.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.naver.maps.geometry.LatLng
@@ -40,13 +42,15 @@ class ShareholderActivity : BaseActivity() {
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
 
-    private lateinit var button_invite: Button
+    private lateinit var button_share: ImageButton
+    private lateinit var button_invite: ImageButton
     private lateinit var checkboxAutoFocus: CheckBox
 
     private lateinit var userData: UserInfo
     private var uid: String? = null
     private var isAutoFocus = true
     private var marker = Marker()
+    private val markSize = 100
 
 
     // 사용자 입력값
@@ -56,7 +60,7 @@ class ShareholderActivity : BaseActivity() {
 
 
     // 위치 데이터를 저장하는 리스트 (제한된 길이 유지)
-    private val locationDataList = mutableListOf<Any>()
+    private val locationDataList = mutableListOf<Location>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,6 +100,11 @@ class ShareholderActivity : BaseActivity() {
 
         button_invite.setOnClickListener {
             KakaoUtils.shareText(this, "위치공유 초대", "위치공유 초대가 왔습니다.", "${uid}")
+        }
+
+        button_share.setOnClickListener {
+            shareText(this,"${uid}")
+
         }
 
         checkboxAutoFocus.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -142,6 +151,15 @@ class ShareholderActivity : BaseActivity() {
         mapView.onLowMemory()
     }
 
+    fun shareText(context: Context, textToShare: String) {
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, textToShare)
+            type = "text/plain"
+        }
+        context.startActivity(Intent.createChooser(shareIntent, "공유할 앱 선택"))
+    }
+
 
     private fun setInitialValues() {
         // Intent로 전달받은 설정 값을 읽어옵니다.
@@ -164,6 +182,7 @@ class ShareholderActivity : BaseActivity() {
 
     private fun initializeMapView(savedInstanceState: Bundle?) {
         mapView = findViewById(R.id.map_view)
+        button_share = findViewById(R.id.button_share)
         button_invite = findViewById(R.id.button_invite)
         checkboxAutoFocus = findViewById(R.id.checkbox_autoFocus)
         mapView.onCreate(savedInstanceState)
@@ -187,7 +206,7 @@ class ShareholderActivity : BaseActivity() {
         }
     }
 
-    private fun _checkList(locationData: Any): MutableList<Any> {
+    private fun _checkList(locationData: Location): MutableList<Location> {
         // 위치 데이터를 리스트에 추가
         locationDataList.add(0, locationData)
         // 리스트가 제한된 길이를 초과하는 경우, 가장 오래된 데이터를 제거 (선입선출)
@@ -239,6 +258,7 @@ class ShareholderActivity : BaseActivity() {
 
     // 지도에 마커 표시
     private fun setMapMarker(userLatitude: Double, userLongitude: Double) {
+
         mapView.getMapAsync { nMap ->
             naverMap = nMap
 
@@ -264,7 +284,7 @@ class ShareholderActivity : BaseActivity() {
                 ImageUtils.loadBitmapFromUrl(this, userData.imageUrl) {
                     marker.icon = OverlayImage.fromBitmap(
                         // 이미지 리사이징
-                        ImageUtils.resizeAndCropToCircle(it!!, 100, 100, 3, Color.BLACK)
+                        ImageUtils.resizeAndCropToCircle(it!!, markSize, markSize, 3, Color.BLACK)
                     )
                 }
             } else {

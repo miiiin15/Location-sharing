@@ -1,5 +1,6 @@
 package com.save.protect.database
 
+import android.location.Location
 import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -13,12 +14,26 @@ object LocationTransmitter {
     private val db = Firebase.firestore
 
     // 사용자가 제공한 문서 ID를 전달받는 함수
-    fun sendLocationData(documentId: String, list: MutableList<Any>) {
+    fun sendLocationData(documentId: String, list: MutableList<Location>) {
+        val dataList = mutableListOf<MutableMap<String, Any?>>()
+
+        for (location in list) {
+            // 각 위치 데이터를 Map 형식으로 변환
+            val data = mutableMapOf<String, Any?>(
+                "latitude" to location.latitude,
+                "longitude" to location.longitude,
+                "altitude" to if (location.hasAltitude()) location.altitude else "" // 고도 정보가 없을 때 빈 문자열 처리
+            )
+
+            // 리스트에 추가
+            dataList.add(data)
+        }
+
         val currentDate =
             SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
 
         val locationData = LocationData(
-            locationList = list,
+            locationList = dataList,
             date = currentDate,
             userName = "유저 *23#"
         )
