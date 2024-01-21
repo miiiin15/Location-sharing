@@ -104,7 +104,8 @@ class SigninActivity : BaseActivity() {
         }
 
         binding.btnLogInGuest.setOnClickListener {
-            guestLogin()
+//            guestLogin()
+            getSupportPopup()
         }
         binding.btnJoin.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
@@ -173,10 +174,20 @@ class SigninActivity : BaseActivity() {
             failure = {
                 loadingDialog.dismiss()
                 Log.d("TEST failure : ", "$it")
+                Toast.makeText(
+                    baseContext,
+                    "실패 : $it",
+                    Toast.LENGTH_LONG,
+                ).show()
 //                alertDlg(it.message.toString())
             },
             networkFail = {
                 Log.d("TEST networkFail : ", "$it")
+                Toast.makeText(
+                    baseContext,
+                    "networkFail 실패 : $it",
+                    Toast.LENGTH_LONG,
+                ).show()
                 loadingDialog.dismiss()
 //                alertDlg(it)
             })
