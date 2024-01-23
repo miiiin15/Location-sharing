@@ -14,14 +14,29 @@
         android:id="@+id/root_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/bg"
         android:paddingHorizontal="@dimen/padding_Horizon"
+        android:paddingTop="@dimen/padding_Vertical"
         tools:context=".activity.MainActivity">
+
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="메인"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/button_userInfo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
             android:text="프로필"
+            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints" />
@@ -41,8 +56,11 @@
                 android:layout_height="100dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
+                android:backgroundTint="@color/button_enable"
+                android:fontFamily="sans-serif-medium"
                 android:text="만들기"
-                android:textSize="15dp"
+                android:textSize="16dp"
+                android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
 
             <Button
@@ -51,8 +69,11 @@
                 android:layout_height="100dp"
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
+                android:backgroundTint="@color/button_enable"
+                android:fontFamily="sans-serif-medium"
                 android:text="입장하기"
-                android:textSize="15dp"
+                android:textSize="16dp"
+                android:textStyle="bold"
                 tools:ignore="MissingConstraints" />
         </LinearLayout>
 

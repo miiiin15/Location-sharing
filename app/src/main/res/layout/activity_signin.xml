@@ -1,81 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"
+        android:orientation="vertical"
+        android:background="@color/bg"
+        android:padding="@dimen/padding_Vertical"
         tools:context=".activity.SignupActivity">
 
-        <View
+        <!-- 타이틀 텍스트 -->
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="로그인"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif-medium"
+            />
+
+        <!-- 입력 필드 영역 -->
+        <LinearLayout
             android:id="@+id/outsideView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
-        <com.save.protect.custom.CustomInput
-            android:id="@+id/editTextEmail"
-            android:layout_width="0dp"
+            <com.save.protect.custom.CustomInput
+                android:id="@+id/editTextEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="이메일을 입력하세요"
+                android:singleLine="true" />
+
+            <CheckBox
+                android:id="@+id/checkBox_emailSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="아이디 저장"
+                />
+
+            <com.save.protect.custom.CustomInput
+                android:id="@+id/editTextPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="비밀번호를 입력하세요"
+                android:inputType="textPassword" />
+        </LinearLayout>
+
+        <!-- 버튼 영역 -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
-            android:hint="이메일을 입력하세요"
-            android:singleLine="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="vertical">
 
-        <CheckBox
-            android:id="@+id/checkBox_emailSave"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="아이디 저장"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextEmail" />
+            <com.save.protect.custom.CustomButton
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/white"
+                android:text="로그인" />
 
-        <com.save.protect.custom.CustomInput
-            android:id="@+id/editTextPassword"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="비밀번호를 입력하세요"
-            android:inputType="textPassword"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/checkBox_emailSave" />
+            <com.save.protect.custom.CustomButton
+                android:id="@+id/btnLogInGuest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="비회원 로그인" />
 
-        <com.save.protect.custom.CustomButton
-            android:id="@+id/btnLogin"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="로그인"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
+            <com.save.protect.custom.CustomButton
+                android:id="@+id/btnJoin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="회원 가입" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/btnLogInGuest"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="비회원 로그인"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
-
-
-        <Button
-            android:id="@+id/btnJoin"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="회원 가입"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnLogInGuest" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>
-
-

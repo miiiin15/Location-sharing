@@ -9,83 +9,100 @@
             type="com.save.protect.activity.CustomShareholderActivity" />
     </data>
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingHorizontal="10dp"
-    tools:context=".activity.MainActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/bg"
+        android:paddingHorizontal="16dp"
+        tools:context=".activity.CustomShareholderActivity">
 
-    <TextView
-        android:id="@+id/textView_markLimit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@{customShareholder.}"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <!-- 타이틀 텍스트 -->
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="방만들기"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="start" />
 
-    <com.save.protect.custom.CustomInput
-        android:id="@+id/editText_markLimit"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="표시 한도 입력"
-        android:inputType="number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_markLimit" />
+        <!-- 입력 필드 영역 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/textView_updateInterval"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="업데이트 간격 (1-60 초):"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_markLimit" />
+            <TextView
+                android:id="@+id/textView_markLimit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:visibility="visible"
+                android:text="표시 한도 (1-10)"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif-medium" />
 
-    <com.save.protect.custom.CustomInput
-        android:id="@+id/editText_updateInterval"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="업데이트 간격 입력"
-        android:inputType="number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_updateInterval" />
+            <com.save.protect.custom.CustomInput
+                android:id="@+id/editText_markLimit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="표시 한도 입력"
+                android:inputType="number" />
 
-    <TextView
-        android:id="@+id/textView_minimumInterval"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="최소 간격 (1-60 초):"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_updateInterval" />
+            <TextView
+                android:id="@+id/textView_updateInterval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="업데이트 간격 (1-60 초)"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif-medium" />
 
-    <com.save.protect.custom.CustomInput
-        android:id="@+id/editText_minimumInterval"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="최소 간격 입력"
-        android:inputType="number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_minimumInterval" />
+            <com.save.protect.custom.CustomInput
+                android:id="@+id/editText_updateInterval"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="업데이트 간격 입력"
+                android:inputType="number" />
 
-    <Button
-        android:id="@+id/button_openNextScreen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="개설"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_minimumInterval" />
+            <TextView
+                android:id="@+id/textView_minimumInterval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="최소 간격 (1-60 초)"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif-medium" />
 
+            <com.save.protect.custom.CustomInput
+                android:id="@+id/editText_minimumInterval"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="최소 간격 입력"
+                android:inputType="number" />
+        </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- 개설 버튼 맨 아래 고정 -->
+        <com.save.protect.custom.CustomButton
+            android:id="@+id/button_openNextScreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="만들기"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-medium"
+            android:elevation="4dp" />
+
+    </LinearLayout>
 </layout>
