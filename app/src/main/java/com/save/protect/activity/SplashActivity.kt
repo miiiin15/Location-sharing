@@ -19,9 +19,23 @@ import com.save.protect.data.DocIdManagement
 import com.save.protect.data.UserManagement
 import com.save.protect.databinding.ActivitySplashBinding
 
+interface PermissionResultListener {
+    fun setOnPermissionResultListener(listener: (requestCode: Int, grantResults: IntArray) -> Unit)
+}
+
 @SuppressLint("CustomSplashScreen")
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : AppCompatActivity(), PermissionResultListener {
     private lateinit var binding: ActivitySplashBinding
+    private var permissionResultListener: ((requestCode: Int, grantResults: IntArray) -> Unit)? = null
+
+    override fun setOnPermissionResultListener(listener: (requestCode: Int, grantResults: IntArray) -> Unit) {
+        permissionResultListener = listener
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissionResultListener?.invoke(requestCode, grantResults)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,23 +45,30 @@ class SplashActivity : AppCompatActivity() {
         UserManagement.resetUserInfo()
         initDocId()
         checkLocationPermission()
-
     }
 
     // 위치 권한 확인
     private fun checkLocationPermission() {
+        binding.stateText.text = "위치 권한 동의가 필요합니다."
         when {
             PermissionUtils.hasLocationPermission(this) -> {
                 next()
             }
             PermissionUtils.checkShowLocationPermission(this) -> {
-                PermissionUtils.showLocationPermissionDialog(this)
+                println(1)
+                PermissionUtils.showLocationPermissionDialog(this){
+                    next()
+                }
             }
             PackageManager.PERMISSION_DENIED == -1 -> {
-                PermissionUtils.showLocationPermissionDialog(this)
+                println(2)
+                PermissionUtils.showLocationPermissionDialog(this){
+                    next()
+                }
             }
             else -> {
-                PermissionUtils.requestLocationPermission(this)
+                println(3)
+                PermissionUtils.requestLocationPermission(this){}
             }
         }
     }
@@ -58,6 +79,7 @@ class SplashActivity : AppCompatActivity() {
         val deepLinkValue = data?.getQueryParameter("doc_id")
 
         if (deepLinkValue != null) {
+            binding.stateText.text = "초대 받은 사용자 입니다."
             DocIdManagement.setReceivedId(deepLinkValue)
             deepLinkValue.let { Log.d("딥링크 값", it.toString()) }
         }
@@ -65,6 +87,7 @@ class SplashActivity : AppCompatActivity() {
 
 
     private fun next() {
+        binding.stateText.text = "위치 권한 확인 완료"
         val intent = Intent(this, SigninActivity::class.java)
         startActivity(intent)
         finish()
