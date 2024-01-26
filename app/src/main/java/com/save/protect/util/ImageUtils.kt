@@ -185,4 +185,47 @@ object ImageUtils {
 
         return outputBitmap
     }
+
+    fun resizeAndCropToCircle(
+        context: Context,
+        imageUri: Uri,
+        width: Int,
+        height: Int,
+        borderWidth: Int,
+        borderColor: Int
+    ): Bitmap? {
+        // Uri를 Bitmap으로 변환
+        val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+            ?: return null
+
+        // 원 모양의 비트맵을 만들기 위한 빈 비트맵 생성
+        val outputBitmap = Bitmap.createBitmap(width, height + 20, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(outputBitmap)
+
+        // 입력 비트맵을 원 모양으로 자르기 위한 원의 경계 상자 계산
+        val centerX = width / 2f
+        val centerY = height / 2f
+        val radius = Math.min(centerX, centerY)
+
+        // 입력 비트맵을 원 모양으로 자르기
+        val paint = Paint()
+        val rect = Rect(0, 0, bitmap.width, bitmap.height)
+        val rectF = RectF(0f, 0f, width.toFloat(), height.toFloat())
+        paint.isAntiAlias = true
+        canvas.drawARGB(0, 0, 0, 0)
+        canvas.drawCircle(centerX, centerY, radius, paint)
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(bitmap, rect, rectF, paint)
+
+        // 테두리 그리기
+        val borderPaint = Paint().apply {
+            color = borderColor
+            style = Paint.Style.STROKE
+            strokeWidth = borderWidth.toFloat()
+            isAntiAlias = true
+        }
+        canvas.drawCircle(centerX, centerY, radius - borderWidth / 2, borderPaint)
+
+        return outputBitmap
+    }
 }

@@ -1,48 +1,44 @@
 package com.save.protect.activity
 
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
+import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
 import com.save.protect.BaseActivity
 import com.save.protect.R
 import com.save.protect.data.UserInfo
 import com.save.protect.data.UserManagement
 import com.save.protect.database.FirebaseStorageManager
 import com.save.protect.database.UserInfoManager
+import com.save.protect.databinding.ActivityProfileBinding
 import com.save.protect.util.ImageUtils
 
 class ProfileActivity : BaseActivity() {
 
-    private lateinit var imageViewProfile: ImageView
-    private lateinit var editTextNickname: EditText
-    private lateinit var buttonRegister: Button
+    private lateinit var binding: ActivityProfileBinding
+    private var userData: UserInfo = UserInfo()
+
     private var imageUrl: Uri? = null
     private lateinit var auth: FirebaseAuth
 
     private var uid: String? = null
 
-    private lateinit var userData: UserInfo
-
+    private val markSize = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_profile)
 
-        imageViewProfile = findViewById(R.id.imageViewProfile)
-        editTextNickname = findViewById(R.id.editTextNickname)
-        buttonRegister = findViewById(R.id.buttonRegister)
+
 
         init()
 
-        imageViewProfile.setOnClickListener {
+        binding.imageViewProfile.setOnClickListener {
             try {
                 ImageUtils.selectImageFromGallery(this) {
                     Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
@@ -52,14 +48,14 @@ class ProfileActivity : BaseActivity() {
             }
         }
 
-        buttonRegister.setOnClickListener {
+        binding.buttonRegister.setOnClickListener {
 
             if (imageUrl != null) {
                 loadingDialog.show(supportFragmentManager, "")
                 FirebaseStorageManager.uploadImageToFirebaseStorage(uid, imageUrl!!) {
                     val URL = it
                     Log.d("다운로드 URL", " : ${URL}")
-                    editTextNickname.text.let {
+                    binding.editTextNickname.text.let {
                         UserInfoManager.setUserInfo(it.toString(), URL.toString()) {
                             Toast.makeText(this, "등록 성공", Toast.LENGTH_SHORT).show()
                             loadingDialog.dismiss()
@@ -81,12 +77,19 @@ class ProfileActivity : BaseActivity() {
         Log.e("저장된유저 ", "${UserManagement.getUserInfo()}")
         Log.e("저장된유저 ", UserManagement.uid)
 
-        if (userData?.userName?.isNotEmpty()!!) {
-            editTextNickname.setText(userData!!.userName)
-        }
+        binding.user = userData
+//        if (userData.isNotEmpty()) {
+//            binding.editTextNickname.setText(userData!!.userName)
+//        }
         if (userData?.imageUrl?.isNotEmpty()!!) {
             ImageUtils.loadBitmapFromUrl(this, userData?.imageUrl!!) {
-                imageViewProfile.setImageBitmap(it)
+                binding.imageViewProfile.setImageBitmap(it)
+            }
+            ImageUtils.loadBitmapFromUrl(this, userData.imageUrl) {
+                binding.imagePreview.visibility = View.VISIBLE
+                binding.imagePreview.setImageBitmap(
+                    ImageUtils.resizeAndCropToCircle(it!!, markSize, markSize, 3, Color.BLACK)
+                )
             }
         }
         loadingDialog.dismiss()
@@ -96,8 +99,13 @@ class ProfileActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         ImageUtils.handleActivityResult(requestCode, resultCode, data) {
-            imageViewProfile.setImageBitmap(ImageUtils.loadImageAndResize(this, it, 500))
+            binding.imageViewProfile.setImageBitmap(ImageUtils.loadImageAndResize(this, it, 1000))
             imageUrl = it
+            binding.imagePreview.visibility = View.VISIBLE
+            binding.imagePreview.setImageBitmap(
+                ImageUtils.resizeAndCropToCircle(this, it, markSize, markSize, 3, Color.BLACK)
+            )
         }
+
     }
 }

@@ -1,34 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    tools:context=".activity.ProfileActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- 프로필 이미지를 표시할 ImageView -->
-    <ImageView
-        android:id="@+id/imageViewProfile"
+    <data>
+
+        <variable
+            name="user"
+            type="com.save.protect.data.UserInfo" />
+    </data>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/logo_foreground" />
+        android:layout_height="match_parent"
+        android:background="@color/bg"
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:context=".activity.ProfileActivity">
 
-    <!-- 사용자 닉네임을 입력할 EditText -->
-    <EditText
-        android:id="@+id/editTextNickname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="사용자 닉네임을 입력하세요" />
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:fontFamily="sans-serif-medium"
+            android:text="프로필 설정"
+            android:textColor="@color/black"
+            android:textSize="24sp" />
 
-    <!-- 'Register' 버튼 -->
-    <Button
-        android:id="@+id/buttonRegister"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="등록" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-</LinearLayout>
+            <!-- 프로필 이미지를 표시할 ImageView -->
+            <ImageView
+                android:id="@+id/imageViewProfile"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginVertical="@dimen/padding_Vertical"
+                android:background="@color/black"
+                android:scaleType="fitCenter"
+                android:src="@drawable/default_profile_image" />
+
+            <!-- 사용자 닉네임을 입력할 EditText -->
+            <com.save.protect.custom.CustomInput
+                android:id="@+id/editTextNickname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="사용자 닉네임을 입력하세요"
+                android:text='@{user.userName}' />
+
+
+            <!-- 'Register' 버튼 -->
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="미리보기"
+            android:textColor="@color/black"
+            android:textSize="24sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/map_bg"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imagePreview"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/default_profile_image" />
+
+        </LinearLayout>
+
+        <com.save.protect.custom.CustomButton
+            android:id="@+id/buttonRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="등록" />
+    </LinearLayout>
+</layout>
