@@ -1,5 +1,3 @@
-// PermissionUtils.kt
-
 package com.save.protect.util
 
 import android.app.AlertDialog
@@ -56,7 +54,6 @@ object PermissionUtils {
             }
         }
     }
-
 
     private val locationPermissions = arrayOf(
         android.Manifest.permission.ACCESS_FINE_LOCATION,

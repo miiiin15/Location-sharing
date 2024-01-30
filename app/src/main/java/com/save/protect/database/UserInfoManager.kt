@@ -1,13 +1,14 @@
 package com.save.protect.database
 
-import android.util.Log
+import android.annotation.SuppressLint
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.save.protect.data.LocationData
 import com.save.protect.data.UserInfo
+import com.save.protect.helper.Logcat
 
 
 object UserInfoManager {
+    @SuppressLint("StaticFieldLeak")
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
@@ -27,8 +28,7 @@ object UserInfoManager {
                     onSuccess()
                 }
                 .addOnFailureListener { e ->
-                    // 데이터 등록 실패
-                    // 오류 처리
+                    // TODO : 데이터 등록 실패 처리
                 }
         }
     }
@@ -39,14 +39,12 @@ object UserInfoManager {
             .document(documentId) // 사용자가 입력한 문서 ID를 여기에 지정합니다.
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
-                    Log.e("유저 정보 조회", "Listen failed.", e)
+                    Logcat.e("유저 정보 조회 failed : e$")
                     return@addSnapshotListener
                 }
 
                 if (snapshot != null && snapshot.exists()) {
                     val userInfo = snapshot.toObject(UserInfo::class.java)
-
-                    Log.d("유저 정보 조회", " = $userInfo")
                     userInfo?.let { listener(it) }
                 }
             }

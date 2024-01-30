@@ -6,7 +6,6 @@ import android.graphics.drawable.LayerDrawable
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginStart
 import com.save.protect.R
 
 interface IsValidListener {
@@ -35,12 +34,9 @@ class CustomInput : AppCompatEditText {
     private fun init() {
         val paddingInDp = (4 * resources.displayMetrics.density).toInt()
         setPadding(paddingInDp, paddingTop, paddingInDp, paddingBottom)
-        // EditText의 배경을 투명한 밑줄로 설정
         background = ContextCompat.getDrawable(context, R.drawable.custom_input_bg)
-        // inputType이 textpassword 타입이 아닌경우 1줄만
-//        isSingleLine = inputType != 129 && inputType != 128
 
-        // 입력 중, 올바른 값, 올바르지 않은 값에 따라 밑줄 색상을 변경
+        // 입력 중, 올바른 값, 올바르지 않은 값에 따라 테두리 색상을 변경
         setOnFocusChangeListener { _, hasFocus ->
             val colorResId = if (hasFocus) {
 
@@ -60,7 +56,7 @@ class CustomInput : AppCompatEditText {
         val layerDrawable = background as? LayerDrawable
         layerDrawable?.findDrawableByLayerId(R.id.underLineContainer)?.apply {
             if (this is GradientDrawable) {
-                setStroke(2, color) // setStroke로 색상 설정
+                setStroke(2, color)
             }
         }
     }
@@ -108,7 +104,6 @@ class CustomInput : AppCompatEditText {
         } else {
             R.color.disable
         }
-        val color = ContextCompat.getColor(context, colorResId)
         setUnderlineColor(ContextCompat.getColor(context, colorResId))
     }
 }

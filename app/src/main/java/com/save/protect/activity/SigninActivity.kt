@@ -6,12 +6,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.CheckBox
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.google.firebase.auth.FirebaseAuth
@@ -19,25 +15,20 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.save.protect.BaseActivity
 import com.save.protect.R
-import com.save.protect.custom.CustomButton
-import com.save.protect.custom.CustomInput
 import com.save.protect.custom.IsValidListener
 import com.save.protect.data.UserManagement
-import com.save.protect.data.auth.repo.SignInRepo
-import com.save.protect.data.test.repo.TestRepo
 import com.save.protect.database.AuthManager
 import com.save.protect.databinding.ActivitySigninBinding
+import com.save.protect.helper.Logcat
 
 class SigninActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySigninBinding
     private lateinit var sharedPref: SharedPreferences
 
-
     private lateinit var auth: FirebaseAuth
 
     private var isSave = false
-
 
     @SuppressLint("MissingInflatedId", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,7 +110,6 @@ class SigninActivity : BaseActivity() {
         sharedPref = this.getSharedPreferences("mySharedPreferences", Context.MODE_PRIVATE)
 
         val email = sharedPref.getString("savedEmail", "")
-        Log.d("이메일 저장된 값 ", ": $email")
         if (email != null && email.isNotEmpty()) {
             binding.editTextEmail.setText(email)
             binding.checkBoxEmailSave.isChecked = true
@@ -147,7 +137,6 @@ class SigninActivity : BaseActivity() {
                         Toast.makeText(this, "비회원 로그인 성공", Toast.LENGTH_SHORT).show()
                     }, 2000)
                 } else {
-                    Log.w("로그인", "signInAnonymously:failure", task.exception)
                     loadingDialog.dismiss()
                     Toast.makeText(
                         baseContext,
@@ -165,9 +154,9 @@ class SigninActivity : BaseActivity() {
             val email = binding.editTextEmail.text.toString().trim()
             editor.putString("savedEmail", email)
             editor.apply()
-            Log.d("이메일 저장 ", "성공 : $email")
+            Logcat.d("이메일 저장 성공 : $email")
         } catch (e: Exception) {
-            Log.e("이메일 저장 ", "실패 ", e)
+            Logcat.e("이메일 저장 실패 $e")
         }
     }
 

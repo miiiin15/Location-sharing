@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.Toast
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -46,10 +44,7 @@ class MainActivity : BaseActivity() {
             }
         }
         binding.buttonOpen.setOnClickListener {
-            //긴급방 만들때 쓰기
-            //val intent = Intent(this, ShareholderActivity::class.java)
             val intent = Intent(this, CustomShareholderActivity::class.java)
-
             startActivity(intent)
         }
 
@@ -80,7 +75,6 @@ class MainActivity : BaseActivity() {
     private fun fetchUserInfo(id: String = "") {
         if (id.isNotEmpty()) {
             UserInfoManager.getUserInfo(id) {
-                Log.d("유저정보", " $it")
                 UserManagement.setUserInfo(it)
             }
             UserManagement.uid = id

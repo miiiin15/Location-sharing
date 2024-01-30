@@ -7,7 +7,7 @@ import androidx.core.content.ContextCompat
 import com.save.protect.R
 
 enum class ButtonType {
-    PRIYMARY,
+    PRIMARY,
     WHITE,
     GREY
 }
@@ -18,7 +18,7 @@ class CustomButton @JvmOverloads constructor(
     defStyleAttr: Int = android.R.attr.buttonStyle
 ) : AppCompatButton(context, attrs, defStyleAttr) {
 
-    private var buttonType: ButtonType = ButtonType.PRIYMARY
+    private var buttonType: ButtonType = ButtonType.PRIMARY
 
     init {
         init(attrs)
@@ -26,7 +26,7 @@ class CustomButton @JvmOverloads constructor(
             try {
                 val type = getString(R.styleable.CustomButton_buttonType) ?: "NORMAL"
                 val buttonType = runCatching { enumValueOf<ButtonType>(type.toUpperCase()) }
-                    .getOrElse { ButtonType.PRIYMARY }
+                    .getOrElse { ButtonType.PRIMARY }
 
                 setButtonType(buttonType)
             } finally {
@@ -64,7 +64,7 @@ class CustomButton @JvmOverloads constructor(
 
     private fun applyButtonDesign() {
         when (buttonType) {
-            ButtonType.PRIYMARY -> {
+            ButtonType.PRIMARY -> {
                 background = ContextCompat.getDrawable(context, R.drawable.custom_button_selector)
                 setTextColor(ContextCompat.getColor(context, R.color.white))
             }

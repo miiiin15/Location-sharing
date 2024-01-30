@@ -4,20 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import com.save.protect.util.PermissionUtils
 import com.save.protect.R
 import com.save.protect.data.DocIdManagement
 import com.save.protect.data.UserManagement
 import com.save.protect.databinding.ActivitySplashBinding
+import com.save.protect.util.PermissionUtils
 
 interface PermissionResultListener {
     fun setOnPermissionResultListener(listener: (requestCode: Int, grantResults: IntArray) -> Unit)
@@ -81,7 +74,6 @@ class SplashActivity : AppCompatActivity(), PermissionResultListener {
         if (deepLinkValue != null) {
             binding.stateText.text = "초대 받은 사용자 입니다."
             DocIdManagement.setReceivedId(deepLinkValue)
-            deepLinkValue.let { Log.d("딥링크 값", it.toString()) }
         }
     }
 

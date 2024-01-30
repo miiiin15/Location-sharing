@@ -1,16 +1,18 @@
 package com.save.protect.database
 
+import android.annotation.SuppressLint
 import android.location.Location
-import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.save.protect.data.LocationData
+import com.save.protect.helper.Logcat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 object LocationTransmitter {
 
-    // Firestore 초기화
+    @SuppressLint("StaticFieldLeak")
     private val db = Firebase.firestore
 
     // 사용자가 제공한 문서 ID를 전달받는 함수
@@ -43,10 +45,10 @@ object LocationTransmitter {
             .document(documentId) // 전달받은 문서 ID를 사용합니다.
             .set(locationData) // set()을 사용하여 문서를 업데이트하거나 생성합니다.
             .addOnSuccessListener {
-                Log.d("위치 송신기", "문서 업데이트 완료: $documentId")
+                Logcat.d("위치 송신기 : 문서 업데이트 완료")
             }
             .addOnFailureListener { e ->
-                Log.e("위치 송신기", "문서 업데이트 중 오류 발생", e)
+                Logcat.e("위치 송신기 : 문서 업데이트 중 오류 발생 $e")
             }
     }
 

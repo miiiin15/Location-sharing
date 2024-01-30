@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.save.protect.R
-import com.save.protect.custom.CustomInput
 import com.save.protect.custom.IsValidListener
 import com.save.protect.databinding.ActivityCustomShareholderBinding
 

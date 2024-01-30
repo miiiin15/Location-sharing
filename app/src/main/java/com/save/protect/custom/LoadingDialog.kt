@@ -49,8 +49,6 @@ class LoadingDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         setCancelable(false)
-        // progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        // progressDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
         return super.onCreateDialog(savedInstanceState)
     }
@@ -60,7 +58,6 @@ class LoadingDialog : DialogFragment() {
         if (!isLoading) {
             isLoading = true
 
-            // 홈화면으로 나갔을 때 show 하면 IllegalStateException 발생
             try {
                 super.show(manager, tag)
             } catch (e: IllegalStateException) {

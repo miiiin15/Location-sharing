@@ -1,11 +1,13 @@
 package com.save.protect.database
 
-import android.util.Log
+import android.annotation.SuppressLint
 import com.google.firebase.firestore.FirebaseFirestore
 import com.save.protect.data.LocationData
+import com.save.protect.helper.Logcat
 
 object LocationReceiver {
 
+    @SuppressLint("StaticFieldLeak")
     private val db = FirebaseFirestore.getInstance()
 
     // 사용자가 입력한 문서 ID를 전달받는 함수
@@ -14,7 +16,7 @@ object LocationReceiver {
             .document(documentId) // 사용자가 입력한 문서 ID를 여기에 지정합니다.
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
-                    Log.e("위치 수신기", "Listen failed.", e)
+                    Logcat.e("위치 수신기 failed : $e")
                     return@addSnapshotListener
                 }
 
@@ -30,16 +32,16 @@ object LocationReceiver {
         val docRef = db.collection("locations_test").document(documentId)
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
-                Log.w("위치 변화 탐지기", "Listen failed.", e)
+                Logcat.w("위치 변화 탐지기 failed : $e")
                 return@addSnapshotListener
             }
 
             if (snapshot != null && snapshot.exists()) {
-                Log.d("위치 변화 탐지기", "Current data: ${snapshot.data}")
+                Logcat.d("위치 변화 탐지기 : ${snapshot.data}")
                 val locationData = snapshot.toObject(LocationData::class.java)
                 locationData?.let { listener(it) }
             } else {
-                Log.d("위치 변화 탐지기", "Current data: null")
+                Logcat.d("위치 변화 탐지기 : null")
             }
         }
     }

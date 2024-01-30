@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -64,24 +63,27 @@ class AudienceActivity : AppCompatActivity() {
         BottomSheetChat.initBottomSheet(
             findViewById(R.id.bottom_sheet_chat),
             onChange = { bttomSheet, newState ->
-                Log.d("바텀시트 newState : ", " $newState")
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                     }
+
                     BottomSheetBehavior.STATE_EXPANDED -> {
                     }
+
                     BottomSheetBehavior.STATE_COLLAPSED -> {
                     }
+
                     BottomSheetBehavior.STATE_DRAGGING -> {
                     }
+
                     BottomSheetBehavior.STATE_SETTLING -> {
                     }
+
                     BottomSheetBehavior.STATE_HALF_EXPANDED -> {
                     }
                 }
             },
             onSlide = { bttomSheet, slideOffset ->
-//                Log.d("바텀시트 slideOffset : ", " $slideOffset")
             }
         )
 
@@ -97,7 +99,6 @@ class AudienceActivity : AppCompatActivity() {
 
         if (deepLinkValue != null) {
             docId = deepLinkValue
-            deepLinkValue.let { Log.d("딥링크 값", it.toString()) }
         } else {
             docId = intent.getStringExtra("doc_id").toString()
         }
@@ -167,9 +168,11 @@ class AudienceActivity : AppCompatActivity() {
             PermissionUtils.checkShowLocationPermission(this) -> {
                 PermissionUtils.showLocationPermissionDialog(this)
             }
+
             PackageManager.PERMISSION_DENIED == -1 -> {
                 PermissionUtils.showLocationPermissionDialog(this)
             }
+
             else -> {
                 PermissionUtils.requestLocationPermission(this)
             }
@@ -185,14 +188,12 @@ class AudienceActivity : AppCompatActivity() {
 
     private fun fetchUserInfo(id: String = "") {
         UserInfoManager.getUserInfo(id) {
-            Log.d("유저정보", " $it")
             shareholderInfo = it
 
         }
     }
 
     fun draw(locationData: LocationData) {
-        // Handle received location data
         val locationList = locationData.locationList
 
         if (locationList != null && locationList.isNotEmpty()) {
@@ -210,7 +211,6 @@ class AudienceActivity : AppCompatActivity() {
             // 생성한 좌표 리스트를 사용하여 경로선 그리기 함수 호출
             drawPath(coords)
         } else {
-            Log.d("위치 수신기", "No location data available.")
         }
     }
 
@@ -222,7 +222,6 @@ class AudienceActivity : AppCompatActivity() {
         mapView.getMapAsync { nMap ->
             naverMap = nMap
 
-            Log.d("그리기용 정보 ", "$coords")
             if (coords.isNotEmpty()) {
                 val firstLatLng = coords[0]
 
@@ -255,7 +254,6 @@ class AudienceActivity : AppCompatActivity() {
 
     // 지도에 마커 표시
     private fun setMapMarker(userLatitude: Double, userLongitude: Double) {
-        Log.d("위치 추적", "마킹값 위도: ${userLatitude}, 마킹값 경도: ${userLongitude}")
         mapView.getMapAsync { nMap ->
             naverMap = nMap
 
@@ -276,7 +274,6 @@ class AudienceActivity : AppCompatActivity() {
             }
             if (shareholderInfo.imageUrl.isNotEmpty()) {
                 // 마커 이미지를 URL에서 로드하여 설정
-                Log.d("이미지 주소", " ${shareholderInfo.imageUrl}")
                 ImageUtils.loadBitmapFromUrl(this, shareholderInfo.imageUrl) {
                     marker.icon = OverlayImage.fromBitmap(
                         // 이미지 리사이징

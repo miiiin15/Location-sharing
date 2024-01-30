@@ -1,47 +1,32 @@
 package com.save.protect
 
-import android.content.*
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.MotionEvent
-import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.save.protect.custom.LoadingDialog
-
-//import com.save.protect.app.data.Constants.context
-//import com.save.protect.esbank.ui.view13_etc.ErrorPageActivity
-//import com.save.protect.utils.KeyboardVisibilityUtils
-//import com.save.protect.utils.OnSingleClickListener
-//import com.save.protect.app.data.DataProvider
 
 abstract class BaseActivity : AppCompatActivity() {
 
     lateinit var loadingDialog: LoadingDialog
-//    lateinit var keyboardVisibilityUtils: KeyboardVisibilityUtils   //키보드 유틸
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
-//			window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        }
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         loadingDialog = LoadingDialog()
 
-//        DataProvider.unCaughtException(this, ErrorPageActivity())   //Global Exception
     }
 
-    // EditText 밖으로 터치됐을 때 키보드 숨기기
-    // 스크롤 할땐 무시,
+    // EditText 밖으로 터치 할 때 키보드 숨기기
     // 단순 ActionUp 일 때만 키보드 숨기기
     val editTextActionMoveCount = HashMap<EditText, Int>()
 
@@ -49,8 +34,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
         currentFocus?.let {
             if (it is EditText) {
-
-//				Logcat.e("MotionEvent: ${ev?.action?.let { MotionEvent.actionToString(it) }?: "노액션" }")
 
                 // 터치 뗄 때
                 if (ev?.action === MotionEvent.ACTION_UP) {
@@ -92,9 +75,7 @@ abstract class BaseActivity : AppCompatActivity() {
                             }
                         }
                     }
-
                     editTextActionMoveCount.clear()
-
                 }
 
                 // 스크롤링
@@ -119,14 +100,6 @@ abstract class BaseActivity : AppCompatActivity() {
         return super.dispatchTouchEvent(ev)
     }
 
-    //중복클릭방지
-//    fun View.setOnSingleClickListener(onSingleClick: (View) -> Unit) {
-//        val oneClick = OnSingleClickListener {
-//            onSingleClick(it)
-//        }
-//        setOnClickListener(oneClick)
-//    }
-
 
     fun showKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -143,7 +116,6 @@ abstract class BaseActivity : AppCompatActivity() {
             inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
-
 
     fun dpToPx(dp: Float): Float {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)

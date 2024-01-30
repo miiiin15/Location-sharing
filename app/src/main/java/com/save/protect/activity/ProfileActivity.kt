@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
@@ -35,7 +34,6 @@ class ProfileActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_profile)
 
 
-
         init()
 
         binding.imageViewProfile.setOnClickListener {
@@ -54,7 +52,6 @@ class ProfileActivity : BaseActivity() {
                 loadingDialog.show(supportFragmentManager, "")
                 FirebaseStorageManager.uploadImageToFirebaseStorage(uid, imageUrl!!) {
                     val URL = it
-                    Log.d("다운로드 URL", " : ${URL}")
                     binding.editTextNickname.text.let {
                         UserInfoManager.setUserInfo(it.toString(), URL.toString()) {
                             Toast.makeText(this, "등록 성공", Toast.LENGTH_SHORT).show()
@@ -74,13 +71,7 @@ class ProfileActivity : BaseActivity() {
         uid = UserManagement.uid
         userData = UserManagement.getUserInfo()!!
 
-        Log.e("저장된유저 ", "${UserManagement.getUserInfo()}")
-        Log.e("저장된유저 ", UserManagement.uid)
-
         binding.user = userData
-//        if (userData.isNotEmpty()) {
-//            binding.editTextNickname.setText(userData!!.userName)
-//        }
         if (userData?.imageUrl?.isNotEmpty()!!) {
             ImageUtils.loadBitmapFromUrl(this, userData?.imageUrl!!) {
                 binding.imageViewProfile.setImageBitmap(it)

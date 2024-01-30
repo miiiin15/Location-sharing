@@ -7,10 +7,13 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.widget.CheckBox
 import android.widget.ImageButton
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
@@ -26,13 +29,13 @@ import com.save.protect.custom.BottomSheetChat
 import com.save.protect.data.UserInfo
 import com.save.protect.data.UserManagement
 import com.save.protect.database.LocationTransmitter
+import com.save.protect.helper.Logcat
 import com.save.protect.util.ImageUtils
 import com.save.protect.util.KakaoUtils
 import com.save.protect.util.PermissionUtils.checkShowLocationPermission
 import com.save.protect.util.PermissionUtils.hasLocationPermission
 import com.save.protect.util.PermissionUtils.requestLocationPermission
 import com.save.protect.util.PermissionUtils.showLocationPermissionDialog
-import java.util.*
 
 class ShareholderActivity : BaseActivity() {
 
@@ -71,18 +74,22 @@ class ShareholderActivity : BaseActivity() {
         BottomSheetChat.initBottomSheet(
             findViewById(R.id.bottom_sheet_chat),
             onChange = { bttomSheet, newState ->
-                Log.d("바텀시트 newState : ", " $newState")
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                     }
+
                     BottomSheetBehavior.STATE_EXPANDED -> {
                     }
+
                     BottomSheetBehavior.STATE_COLLAPSED -> {
                     }
+
                     BottomSheetBehavior.STATE_DRAGGING -> {
                     }
+
                     BottomSheetBehavior.STATE_SETTLING -> {
                     }
+
                     BottomSheetBehavior.STATE_HALF_EXPANDED -> {
                     }
                 }
@@ -103,7 +110,7 @@ class ShareholderActivity : BaseActivity() {
         }
 
         button_share.setOnClickListener {
-            shareText(this,"${uid}")
+            shareText(this, "${uid}")
 
         }
 
@@ -169,9 +176,6 @@ class ShareholderActivity : BaseActivity() {
         uid = UserManagement.uid
         userData = UserManagement.getUserInfo()!!
 
-        Log.e("저장된유저 ", "${UserManagement.getUserInfo()}")
-        Log.e("저장된유저 ", UserManagement.uid)
-
         // 값이 null인 경우 처리
         if (markLimit != 0 || updateInterval != 0 || minimumInterval != 0) {
             setting_markLimit = markLimit
@@ -197,9 +201,11 @@ class ShareholderActivity : BaseActivity() {
             checkShowLocationPermission(this) -> {
                 showLocationPermissionDialog(this)
             }
+
             PackageManager.PERMISSION_DENIED == -1 -> {
                 showLocationPermissionDialog(this)
             }
+
             else -> {
                 requestLocationPermission(this)
             }
@@ -225,8 +231,6 @@ class ShareholderActivity : BaseActivity() {
                     // 위치 변경 시 작업
                     setMapMarker(location.latitude, location.longitude)
                     uid?.let { LocationTransmitter.sendLocationData(it, _checkList(location)) }
-                    // 위치 변경을 출력
-                    Log.d("위치 추적", "위도: ${location.latitude}, 경도: ${location.longitude}")
                 }
             }
         }
@@ -234,8 +238,7 @@ class ShareholderActivity : BaseActivity() {
 
     @SuppressLint("MissingPermission")
     fun startLocationUpdates(updateInterval: Long = 10000, minimumInterval: Long = 3000) {
-        Log.d("위치 추적", "시작")
-//        Log.d("타이머 값들 : ", "$setting_markLimit / $updateInterval / $minimunInterval")
+        Logcat.d("위치 추적 시작")
 
         if (hasLocationPermission(this)) {
             val locationRequest = LocationRequest()
@@ -252,7 +255,7 @@ class ShareholderActivity : BaseActivity() {
     }
 
     fun stopLocationUpdates() {
-        Log.d("위치 추적", "중지")
+        Logcat.d("위치 추적 중지")
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
@@ -280,7 +283,6 @@ class ShareholderActivity : BaseActivity() {
             }
             if (userData.imageUrl.isNotEmpty()) {
                 // 마커 이미지를 URL에서 로드하여 설정
-                Log.d("이미지 주소", " ${userData.imageUrl}")
                 ImageUtils.loadBitmapFromUrl(this, userData.imageUrl) {
                     marker.icon = OverlayImage.fromBitmap(
                         // 이미지 리사이징

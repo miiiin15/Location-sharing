@@ -1,7 +1,6 @@
 package com.save.protect.database
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
@@ -15,8 +14,6 @@ object AuthManager {
     // 회원가입
     fun signUpFireBase(context: Context,email: String?, password: String?, onSuccess: () -> Unit,onFailure: (String) -> Unit) {
         if (email.isNullOrEmpty() || password.isNullOrEmpty()) {
-            // 이메일 또는 비밀번호가 빈 문자열 또는 null인 경우
-            Log.d("회원가입", "이메일 또는 비밀번호를 확인하세요.")
             return
         }
 
