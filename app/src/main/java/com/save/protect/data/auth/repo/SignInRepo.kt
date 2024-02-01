@@ -4,7 +4,8 @@ import android.util.Log
 import com.save.protect.api.NetworkService
 import com.save.protect.helper.Logcat
 import kr.co.essb.app.data.api.response.ApiResponse
-import okhttp3.MultipartBody
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,12 +21,10 @@ object SignInRepo {
     ) {
 
         Logcat.d("$email $password")
-        // RequestBody 생성
-        val requestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("email", email)
-            .addFormDataPart("password", password)
-            .build()
+
+        // JSON 형식의 요청 데이터 생성
+        val jsonBody = "{\"email\": \"$email\", \"password\": \"$password\"}"
+        val requestBody = jsonBody.toRequestBody("application/json".toMediaType())
 
         // NetworkService에서 Retrofit 인터페이스를 통해 로그인 요청을 보냄
         NetworkService.getService().requestSignIn(requestBody)
@@ -34,22 +33,17 @@ object SignInRepo {
                     call: Call<ApiResponse<String>>,
                     response: Response<ApiResponse<String>>
                 ) {
-
                     if (response.isSuccessful) {
-                        // 성공적인 응답 처리
                         val data = response.body() ?: return
                         success(data)
                     } else {
-                        // 실패한 응답 처리
-                        Logcat.d("Log register isSuccessful != ${response.code()}")
-                        Logcat.d("Log register isSuccessful != ${response.message()}")
+                        // 통신 실패 처리
                         networkFail(response.code().toString())
                     }
                 }
 
                 override fun onFailure(call: Call<ApiResponse<String>>, t: Throwable) {
-                    // 통신 실패 처리
-                    Logcat.d("Log register failure : ${t.message}")
+                    // 실패한 응답 처리
                     failure(t)
                 }
             })
