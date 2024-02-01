@@ -8,10 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.CheckBox
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.google.firebase.auth.FirebaseAuth
@@ -19,12 +16,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.save.protect.BaseActivity
 import com.save.protect.R
-import com.save.protect.custom.CustomButton
-import com.save.protect.custom.CustomInput
 import com.save.protect.custom.IsValidListener
 import com.save.protect.data.UserManagement
 import com.save.protect.data.auth.repo.SignInRepo
-import com.save.protect.data.test.repo.TestRepo
 import com.save.protect.database.AuthManager
 import com.save.protect.databinding.ActivitySigninBinding
 
@@ -64,6 +58,7 @@ class SigninActivity : BaseActivity() {
                 return text.isNotEmpty()
             }
         })
+
         binding.editTextPassword.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
                 validButton()
@@ -104,9 +99,13 @@ class SigninActivity : BaseActivity() {
         }
 
         binding.btnLogInGuest.setOnClickListener {
-//            guestLogin()
-            getSupportPopup()
+            guestLogin()
         }
+
+        binding.btnLogInTest.setOnClickListener {
+            testLogin()
+        }
+
         binding.btnJoin.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
@@ -159,7 +158,8 @@ class SigninActivity : BaseActivity() {
             }
     }
 
-    private fun getSupportPopup() {
+    private fun testLogin() {
+        loadingDialog.show(supportFragmentManager, "")
         val email = binding.editTextEmail.text.toString().trim()
         val password = binding.editTextPassword.text.toString().trim()
 
@@ -168,29 +168,27 @@ class SigninActivity : BaseActivity() {
             password,
             success = {
                 loadingDialog.dismiss()
-                Log.d("TEST : ", "$it")
-//
+                if (it.status == "OK") {
+                    Toast.makeText(this, it.data, Toast.LENGTH_SHORT).show()
+                    UserManagement.isGuest = false
+                    if (isSave) {
+                        setStringSharedPref()
+                    }
+                    loadingDialog.dismiss()
+                    next()
+                } else {
+                    alertDlg(it.error.message.toString())
+                }
             },
             failure = {
                 loadingDialog.dismiss()
-                Log.d("TEST failure : ", "$it")
-                Toast.makeText(
-                    baseContext,
-                    "실패 : $it",
-                    Toast.LENGTH_LONG,
-                ).show()
-//                alertDlg(it.message.toString())
+                alertDlg(it.message.toString())
             },
             networkFail = {
-                Log.d("TEST networkFail : ", "$it")
-                Toast.makeText(
-                    baseContext,
-                    "networkFail 실패 : $it",
-                    Toast.LENGTH_LONG,
-                ).show()
                 loadingDialog.dismiss()
-//                alertDlg(it)
-            })
+                alertDlg("$it : " + getString(R.string.network_error_message))
+            }
+        )
     }
 
     // 내부에 이메일값 저장
