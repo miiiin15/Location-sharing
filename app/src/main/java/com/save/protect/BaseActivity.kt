@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.save.protect.custom.CustomDialog
 import com.save.protect.custom.LoadingDialog
 
 //import com.save.protect.app.data.Constants.context
@@ -126,6 +127,28 @@ abstract class BaseActivity : AppCompatActivity() {
 //        }
 //        setOnClickListener(oneClick)
 //    }
+
+    fun alertDlg(msg: String, title: String = "") {
+        try {
+            val builder = CustomDialog.Builder(this)
+            builder.setMessage(msg)
+                .setCancelable(false)
+                .setPositiveButton(DialogInterface.OnClickListener { dialog, which ->
+                    dialog.dismiss()
+                })
+
+            // 제목이 비어있지 않고 null이 아닌 경우에만 제목을 설정
+            if (title.isNotBlank()) {
+                builder.setTitle(title)
+            }
+
+            builder.create().show()
+        } catch (e: WindowManager.BadTokenException) {
+            e.printStackTrace()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
 
     fun showKeyboard() {
