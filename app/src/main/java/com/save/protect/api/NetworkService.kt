@@ -49,13 +49,13 @@ object NetworkService {
             val original = chain.proceed(chain.request())
 
             try {
-                Logcat.d("related request: " + original.request.url.toString())
+//                Logcat.d("서버 응답 : " + original.request.url.toString())
 
 
                 // https://m.blog.naver.com/PostView.nhn?blogId=bluecrossing&logNo=221463228194&proxyReferer=https:%2F%2Fwww.google.com%2F
                 // original.body.string 은 한번만 호출해야 한다고 한다...
                 Logcat.d(
-                    "raw response: \n" +
+                    "응답 값 : \n" +
                             GsonBuilder()
                                 .setPrettyPrinting()
                                 .create()
@@ -72,7 +72,7 @@ object NetworkService {
 
 
             } catch (e: Exception) {
-
+                Logcat.d("응답 에러 : " + e.message)
             }
 
 
@@ -89,8 +89,8 @@ object NetworkService {
 
             val jwtAccessToken = original.headers("access-token")
             val jwtRefreshToken = original.headers("refresh-token")
-            Logcat.d("jwtAccessToken : $jwtAccessToken")
-            Logcat.d("jwtRefreshToken : $jwtRefreshToken")
+            Logcat.d("jwtAccess토큰값 : $jwtAccessToken")
+            Logcat.d("jwtRefresh토큰값 : $jwtRefreshToken")
             if (jwtAccessToken.isNotEmpty()) {
                 for (token in jwtAccessToken) {
                     pref?.edit()?.putString("access-token", token)?.apply()
