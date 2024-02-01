@@ -2,4 +2,34 @@
 <resources>
     <dimen name="padding_Horizon">24dp</dimen>
     <dimen name="padding_Vertical">12dp</dimen>
+
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin_16">16dp</dimen>
+    <dimen name="margin_20">20dp</dimen>
+    <dimen name="margin_32">32dp</dimen>
+
+
+    <dimen name="padding_16">16dp</dimen>
+    <dimen name="padding_20">20dp</dimen>
+    <dimen name="padding_32">32dp</dimen>
+    <dimen name="padding_84">84dp</dimen>
+    <dimen name="padding_108">108dp</dimen>
+    <dimen name="padding_124">124dp</dimen>
+
+    <dimen name="size_44">44dp</dimen>
+
+    <dimen name="border_1">1dp</dimen>
+
+    <dimen name="height_1">1dp</dimen>
+    <dimen name="height_tb_48">48dp</dimen>
+    <dimen name="height_dlg_max_300">300dp</dimen>
+
+    <dimen name="line_space_8">8dp</dimen>
+
+    <dimen name="radius_10">10dp</dimen>
+
+    <dimen name="text_14">14dp</dimen>
+    <dimen name="text_16">16dp</dimen>
+    <dimen name="text_18">18dp</dimen>
+    <dimen name="text_20">20dp</dimen>
 </resources>
