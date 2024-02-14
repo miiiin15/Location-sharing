@@ -17,6 +17,7 @@ import com.google.firebase.ktx.Firebase
 import com.save.protect.BaseActivity
 import com.save.protect.R
 import com.save.protect.custom.IsValidListener
+import com.save.protect.data.DataProvider
 import com.save.protect.data.UserManagement
 import com.save.protect.data.auth.repo.SignInRepo
 import com.save.protect.database.AuthManager
@@ -171,6 +172,7 @@ class SigninActivity : BaseActivity() {
                 if (it.status == "OK") {
                     Toast.makeText(this, it.data, Toast.LENGTH_SHORT).show()
                     UserManagement.isGuest = false
+                    DataProvider.isLogin = true
                     if (isSave) {
                         setStringSharedPref()
                     }

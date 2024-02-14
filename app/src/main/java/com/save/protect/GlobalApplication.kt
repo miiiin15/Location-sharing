@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.KakaoSdk.keyHash
+import com.save.protect.data.DataProvider
 
 
 class GlobalApplication : Application() {
@@ -13,6 +14,7 @@ class GlobalApplication : Application() {
         instance = this
 
         // 앱 초기화 작업 수행
+        DataProvider.init(this)
 
         // 라이트 모드 강제
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
