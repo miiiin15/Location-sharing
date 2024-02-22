@@ -269,10 +269,10 @@ class AudienceActivity : AppCompatActivity() {
 
             marker.position = initialLatLng
             marker.map = naverMap
-            if (shareholderInfo.userName.isNotEmpty()) {
-                marker.captionText = shareholderInfo.userName
+            if (shareholderInfo.name.isNotEmpty()) {
+                marker.captionText = shareholderInfo.name
             } else {
-                marker.captionText = "익명의 유저"
+                marker.captionText = getString(R.string.none_member_name)
             }
             if (shareholderInfo.imageUrl.isNotEmpty()) {
                 // 마커 이미지를 URL에서 로드하여 설정

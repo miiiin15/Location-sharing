@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Protect</string>
     <string name="network_error_message">네트워크 통신이 원할하지 않습니다.</string>
+    <string name="none_member_name">익명의 유저</string>
 </resources>

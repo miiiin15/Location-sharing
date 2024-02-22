@@ -2,23 +2,20 @@ package com.save.protect.activity
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.Toast
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.save.protect.BaseActivity
 import com.save.protect.R
 import com.save.protect.custom.CustomInput
 import com.save.protect.custom.IsValidListener
 import com.save.protect.data.DocIdManagement
 import com.save.protect.data.UserManagement
-import com.save.protect.database.UserInfoManager
+import com.save.protect.data.auth.repo.UserInfoRepo
 import com.save.protect.databinding.ActivityMainBinding
 import com.save.protect.util.ClipboardUtils
 
@@ -59,13 +56,9 @@ class MainActivity : BaseActivity() {
         }
     }
 
+
     private fun init() {
-        auth = Firebase.auth
-
-        // 유저 정보 초기화
-        fetchUserInfo(auth.currentUser?.uid.toString())
-
-
+        fetchUserInfo()
     }
 
     private fun checkReceivedId() {
@@ -77,16 +70,27 @@ class MainActivity : BaseActivity() {
         return
     }
 
-    private fun fetchUserInfo(id: String = "") {
-        if (id.isNotEmpty()) {
-            UserInfoManager.getUserInfo(id) {
-                Log.d("유저정보", " $it")
-                UserManagement.setUserInfo(it)
+    private fun fetchUserInfo() {
+        UserInfoRepo.getUserInfo(
+            success = {
+                loadingDialog.dismiss()
+                if (it.status == "OK") {
+
+                    UserManagement.setUserInfo(it.data)
+                    loadingDialog.dismiss()
+                } else {
+                    showAlert(it.error.message.toString())
+                }
+            },
+            failure = {
+                loadingDialog.dismiss()
+                showAlert(it.message.toString())
+            },
+            networkFail = {
+                loadingDialog.dismiss()
+                showAlert("$it : " + getString(R.string.network_error_message))
             }
-            UserManagement.uid = id
-        } else {
-            //TODO : 유저정보 저장실패 처리
-        }
+        )
     }
 
     private fun enterAudience(input: String) {
@@ -118,7 +122,6 @@ class MainActivity : BaseActivity() {
             }
         })
 
-        // 붙여넣기 버튼에 아무 동작을 넣지 않음
         buttonPaste.setOnClickListener {
             copiedText.let { editTextInvite.setText(it) }
         }

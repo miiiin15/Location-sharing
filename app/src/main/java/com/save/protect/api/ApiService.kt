@@ -1,8 +1,8 @@
 package com.save.protect.api
 
+import com.save.protect.data.UserInfo
 import kr.co.essb.app.data.api.response.ApiResponse
 import okhttp3.RequestBody
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -13,17 +13,17 @@ interface ApiService {
      * 공통
      */
 
-    // TEST
-    @GET("api/test")
-    fun getSupportPopup(): Call<ApiResponse<Any>>
-
     // 로그인
     @POST("api/auth/sign-in")
     fun requestSignIn(@Body params: RequestBody): Call<ApiResponse<String>>
 
+    // 내정보 조회
+    @GET("api/member")
+    fun getUserInfo(): Call<ApiResponse<UserInfo>>
+
     //주소 검증
-//    @POST("api/lookup/address/verify")
-//    fun requestAddressVerify(@Body params: RequestBody): Call<ApiResponse<AddressVerify>>
+    @POST("api/location")
+    fun saveLocationList(@Body params: RequestBody): Call<ApiResponse<String>>
 
     //약관 조회
 //    @POST("api/policy")

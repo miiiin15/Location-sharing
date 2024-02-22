@@ -4,14 +4,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
 import com.save.protect.BaseActivity
 import com.save.protect.R
 import com.save.protect.data.UserInfo
@@ -74,11 +69,10 @@ class ProfileActivity : BaseActivity() {
 
     private fun init() {
         loadingDialog.show(supportFragmentManager, "")
-        uid = UserManagement.uid
         userData = UserManagement.getUserInfo()!!
 
         Log.e("저장된유저 ", "${UserManagement.getUserInfo()}")
-        Log.e("저장된유저 ", UserManagement.uid)
+        Log.e("저장된유저 ", userData.uuid)
 
             binding.user = userData
 //        if (userData.isNotEmpty()) {

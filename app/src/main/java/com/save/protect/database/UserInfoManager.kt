@@ -3,7 +3,6 @@ package com.save.protect.database
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.save.protect.data.LocationData
 import com.save.protect.data.UserInfo
 
 
