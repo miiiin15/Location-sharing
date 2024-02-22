@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="사용자 닉네임을 입력하세요"
-            android:text='@{user.userName}' />
+            android:text="@{user.name}" />
 
 
         <!-- 'Register' 버튼 -->
