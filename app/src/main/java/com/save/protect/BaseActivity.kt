@@ -128,7 +128,7 @@ abstract class BaseActivity : AppCompatActivity() {
 //        setOnClickListener(oneClick)
 //    }
 
-    fun alertDlg(msg: String, title: String = "") {
+    fun showAlert(msg: String, title: String = "") {
         try {
             val builder = CustomDialog.Builder(this)
             builder.setMessage(msg)

@@ -179,16 +179,16 @@ class SigninActivity : BaseActivity() {
                     loadingDialog.dismiss()
                     next()
                 } else {
-                    alertDlg(it.error.message.toString())
+                    showAlert(it.error.message.toString())
                 }
             },
             failure = {
                 loadingDialog.dismiss()
-                alertDlg(it.message.toString())
+                showAlert(it.message.toString())
             },
             networkFail = {
                 loadingDialog.dismiss()
-                alertDlg("$it : " + getString(R.string.network_error_message))
+                showAlert("$it : " + getString(R.string.network_error_message))
             }
         )
     }
