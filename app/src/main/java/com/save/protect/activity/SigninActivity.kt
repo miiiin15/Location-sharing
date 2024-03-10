@@ -5,22 +5,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.save.protect.BaseActivity
 import com.save.protect.R
 import com.save.protect.custom.IsValidListener
 import com.save.protect.data.DataProvider
 import com.save.protect.data.UserManagement
 import com.save.protect.data.auth.repo.SignInRepo
-import com.save.protect.database.AuthManager
 import com.save.protect.databinding.ActivitySigninBinding
 
 class SigninActivity : BaseActivity() {
@@ -28,8 +23,6 @@ class SigninActivity : BaseActivity() {
     private lateinit var binding: ActivitySigninBinding
     private lateinit var sharedPref: SharedPreferences
 
-
-    private lateinit var auth: FirebaseAuth
 
     private var isSave = false
 
@@ -72,40 +65,9 @@ class SigninActivity : BaseActivity() {
         }
 
         binding.btnLogin.setOnClickListener {
-            val email = binding.editTextEmail.text.toString().trim()
-            val password = binding.editTextPassword.text.toString().trim()
-
-            if (email.isNotEmpty() && password.isNotEmpty()) {
-                loadingDialog.show(supportFragmentManager, "")
-                AuthManager.loginFireBase(this, email, password,
-                    onSuccess = {
-                        // 로그인 성공
-                        Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
-                        UserManagement.isGuest = false
-                        if (isSave) {
-                            setStringSharedPref()
-                        }
-                        loadingDialog.dismiss()
-                        next()
-                    },
-                    onFailure = { errorMessage ->
-                        // 로그인 실패 시 수행할 동작
-                        loadingDialog.dismiss()
-                        Toast.makeText(this, "로그인 실패 $errorMessage", Toast.LENGTH_SHORT).show()
-                    }
-                )
-            } else {
-                Toast.makeText(this, "아이디 비밀번호를 확인해주세요", Toast.LENGTH_SHORT).show()
-            }
+            login()
         }
 
-        binding.btnLogInGuest.setOnClickListener {
-            guestLogin()
-        }
-
-        binding.btnLogInTest.setOnClickListener {
-            testLogin()
-        }
 
         binding.btnJoin.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
@@ -115,10 +77,7 @@ class SigninActivity : BaseActivity() {
     }
 
     private fun init() {
-
-        auth = Firebase.auth
         sharedPref = this.getSharedPreferences("mySharedPreferences", Context.MODE_PRIVATE)
-
         val email = sharedPref.getString("savedEmail", "")
         Log.d("이메일 저장된 값 ", ": $email")
         if (email != null && email.isNotEmpty()) {
@@ -136,30 +95,8 @@ class SigninActivity : BaseActivity() {
         binding.btnLogin.setEnable(email.isNotEmpty() && password.isNotEmpty())
     }
 
-    private fun guestLogin() {
-        loadingDialog.show(supportFragmentManager, "")
-        auth.signInAnonymously()
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    val handler = Handler()
-                    handler.postDelayed({
-                        next()
-                        loadingDialog.dismiss()
-                        Toast.makeText(this, "비회원 로그인 성공", Toast.LENGTH_SHORT).show()
-                    }, 2000)
-                } else {
-                    Log.w("로그인", "signInAnonymously:failure", task.exception)
-                    loadingDialog.dismiss()
-                    Toast.makeText(
-                        baseContext,
-                        "로그인 실패",
-                        Toast.LENGTH_SHORT,
-                    ).show()
-                }
-            }
-    }
 
-    private fun testLogin() {
+    private fun login() {
         loadingDialog.show(supportFragmentManager, "")
         val email = binding.editTextEmail.text.toString().trim()
         val password = binding.editTextPassword.text.toString().trim()

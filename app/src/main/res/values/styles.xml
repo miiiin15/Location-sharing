@@ -13,6 +13,12 @@
         <attr name="maxHeight" format="dimension" />
     </declare-styleable>
 
+    <!-- CustomButton에 대한 속성 세트 -->
+    <declare-styleable name="CustomButton">
+        <!-- 버튼의 텍스트를 설정하는 속성 -->
+        <attr name="buttonText" format="string" />
+    </declare-styleable>
+
     <!-- Progress Dialog -->
     <style name="AppDialog" parent="Theme.AppCompat.Dialog">
         <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
