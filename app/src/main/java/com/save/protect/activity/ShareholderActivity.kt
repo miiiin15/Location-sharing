@@ -1,7 +1,6 @@
 package com.save.protect.activity
 
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -29,10 +28,7 @@ import com.save.protect.data.location.repo.LocationRepo
 import com.save.protect.helper.Logcat
 import com.save.protect.util.ImageUtils
 import com.save.protect.util.KakaoUtils
-import com.save.protect.util.PermissionUtils.checkShowLocationPermission
 import com.save.protect.util.PermissionUtils.hasLocationPermission
-import com.save.protect.util.PermissionUtils.requestLocationPermission
-import com.save.protect.util.PermissionUtils.showLocationPermissionDialog
 import java.util.*
 
 class ShareholderActivity : BaseActivity() {
@@ -43,7 +39,7 @@ class ShareholderActivity : BaseActivity() {
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
 
-    private lateinit var button_invite: Button
+    private lateinit var buttonInvite: Button
     private lateinit var checkboxAutoFocus: CheckBox
 
     private lateinit var userData: UserInfo
@@ -52,12 +48,10 @@ class ShareholderActivity : BaseActivity() {
 
 
     // 사용자 입력값
-    private var setting_markLimit = 3
-    private var setting_updateInterval = 10
-    private var setting_minimunInterval = 3
+    private var settingMarkLimit = 3
+    private var settingUpdateInterval = 10
+    private var settingMinimumInterval = 3
 
-
-    // 위치 데이터를 저장하는 리스트 (제한된 길이 유지)
     private val locationDataList = mutableListOf<LocationItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,17 +86,13 @@ class ShareholderActivity : BaseActivity() {
 
         createLocationCallback()
 
-        // 위치 권한 확인
-        checkLocationPermission()
-
-
-        button_invite.setOnClickListener {
-            userData.uuid.let {
+        buttonInvite.setOnClickListener {
+            userData.recommenderCode.let {
                 KakaoUtils.shareText(
                     this,
                     "위치공유 초대",
                     "위치공유 초대가 왔습니다.",
-                    userData.uuid
+                    userData.recommenderCode
                 )
             }
         }
@@ -113,7 +103,6 @@ class ShareholderActivity : BaseActivity() {
 
     }
 
-
     override fun onStart() {
         super.onStart()
         mapView.onStart()
@@ -122,7 +111,7 @@ class ShareholderActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         mapView.onResume()
-        startLocationUpdates(setting_updateInterval * 100L, setting_minimunInterval * 100L)
+        startLocationUpdates(settingUpdateInterval * 100L, settingMinimumInterval * 100L)
     }
 
     override fun onPause() {
@@ -157,57 +146,32 @@ class ShareholderActivity : BaseActivity() {
         val markLimit = intent.getIntExtra("MARK_LIMIT", 3)
         val updateInterval = intent.getIntExtra("UPDATE_INTERVAL", 10)
         val minimumInterval = intent.getIntExtra("MINIMUM_INTERVAL", 3)
-        userData = UserManagement.getUserInfo()!!
-
-        Log.d("저장된유저 ", "${UserManagement.getUserInfo()}")
+        userData = UserManagement.getUserInfo() ?: UserInfo()
 
         // 값이 null인 경우 처리
         if (markLimit != 0 || updateInterval != 0 || minimumInterval != 0) {
-            setting_markLimit = markLimit
-            setting_minimunInterval = minimumInterval
-            setting_updateInterval = updateInterval
+            settingMarkLimit = markLimit
+            settingMinimumInterval = minimumInterval
+            settingUpdateInterval = updateInterval
         }
     }
 
     private fun initializeMapView(savedInstanceState: Bundle?) {
         mapView = findViewById(R.id.map_view)
-        button_invite = findViewById(R.id.button_invite)
+        buttonInvite = findViewById(R.id.button_invite)
         checkboxAutoFocus = findViewById(R.id.checkbox_autoFocus)
         mapView.onCreate(savedInstanceState)
     }
 
-    // 위치 권한 확인
-    private fun checkLocationPermission() {
-        when {
-            hasLocationPermission(this) -> {
-            }
-
-            checkShowLocationPermission(this) -> {
-                showLocationPermissionDialog(this)
-            }
-            PackageManager.PERMISSION_DENIED == -1 -> {
-                showLocationPermissionDialog(this)
-            }
-            else -> {
-                requestLocationPermission(this)
-            }
-        }
-    }
 
     private fun _checkList(latitude: Double, longitude: Double): String {
-        // 위치 데이터를 JSON 배열로 변환할 리스트
-        val locationDataList = mutableListOf<Pair<Double, Double>>()
 
-        // 위치 데이터를 리스트에 추가
-        locationDataList.add(0, Pair(latitude, longitude))
+        locationDataList.add(0, LocationItem(latitude, longitude))
 
-        // 리스트의 길이가 설정된 한계를 초과하는 경우 가장 오래된 데이터를 제거 (FIFO)
-        val setting_markLimit = 10 // 예시로 설정된 한계 값
-        if (locationDataList.size > setting_markLimit) {
-            locationDataList.removeAt(setting_markLimit)
+        if (locationDataList.size > settingMarkLimit) {
+            locationDataList.removeAt(settingMarkLimit)
         }
 
-        // 위치 데이터를 JSON 배열로 매핑
         val jsonArray = locationDataList.map { (lat, lng) ->
             val jsonObject = JsonObject()
             jsonObject.addProperty("latitude", lat)
@@ -215,7 +179,8 @@ class ShareholderActivity : BaseActivity() {
             jsonObject
         }
 
-        // JSON 배열을 문자열로 변환하여 반환
+        Log.d("리스트??", Gson().toJson(jsonArray))
+
         return Gson().toJson(jsonArray)
     }
 
@@ -223,7 +188,7 @@ class ShareholderActivity : BaseActivity() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult ?: return
-                for (location in locationResult.locations) {
+                locationResult.locations.forEach { location ->
                     // 위치 변경 시 작업
                     setMapMarker(location.latitude, location.longitude)
                     LocationRepo.saveLocationData(
@@ -253,13 +218,10 @@ class ShareholderActivity : BaseActivity() {
 
     @SuppressLint("MissingPermission")
     fun startLocationUpdates(updateInterval: Long = 10000, minimumInterval: Long = 3000) {
-        Log.d("위치 추적", "시작")
-//        Log.d("타이머 값들 : ", "$setting_markLimit / $updateInterval / $minimunInterval")
-
         if (hasLocationPermission(this)) {
             val locationRequest = LocationRequest()
-            locationRequest.interval = updateInterval // 위치 업데이트 간격 (밀리초)
-            locationRequest.fastestInterval = minimumInterval // 가장 빠른 업데이트 간격 (밀리초)
+            locationRequest.interval = updateInterval
+            locationRequest.fastestInterval = minimumInterval
             locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
             fusedLocationClient.requestLocationUpdates(
@@ -271,7 +233,6 @@ class ShareholderActivity : BaseActivity() {
     }
 
     fun stopLocationUpdates() {
-        Log.d("위치 추적", "중지")
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
