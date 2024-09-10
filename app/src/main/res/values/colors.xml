@@ -6,6 +6,7 @@
     <color name="primary">#94D8D6</color>
     <color name="secondary">#4F83CC</color>
     <color name="bg">#D1DFE1</color>
+    <color name="bg50">#80D1DFE1</color> <!-- 50% 투명도 -->
     <color name="error">#FF7043</color>
     <color name="disable">#B1AFAF</color>
     <color name="button_enable">#4F83CC</color>

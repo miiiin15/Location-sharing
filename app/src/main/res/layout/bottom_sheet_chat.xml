@@ -11,7 +11,7 @@
     <View
         android:id="@+id/sheet_header"
         android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -19,28 +19,46 @@
     <TextView
         android:id="@+id/textView_sheet_title"
         android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:background="@color/default_color"
+        android:layout_height="40dp"
+        android:background="@color/secondary"
         android:gravity="center"
-        android:text="채팅"
+        android:fontFamily="sans-serif-medium"
+        android:text="메시지 보내려면 올리기"
         android:textSize="18dp"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sheet_header" />
 
-    <View
-        android:id="@+id/sheet_view"
-        android:layout_width="0dp"
-        android:layout_height="500dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_sheet_title" />
 
-    <com.save.protect.custom.CustomInput
-        android:id="@+id/sheet_input"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="채팅을 입력해주세요."
-        app:layout_constraintTop_toBottomOf="@+id/sheet_view" />
+        android:background="@color/bg50"
+        android:orientation="horizontal"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/textView_sheet_title">
+
+        <com.save.protect.custom.CustomInput
+            android:id="@+id/sheet_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="채팅을 입력해주세요."
+            app:layout_constraintTop_toBottomOf="@+id/sheet_view" />
+
+        <ImageButton
+            android:id="@+id/button_send"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="카카오톡 초대"
+            android:scaleType="centerCrop"
+            android:src="@drawable/icon_check_none" />
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
