@@ -2,6 +2,7 @@ package com.save.protect.util
 
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import com.kakao.sdk.common.util.KakaoCustomTabsClient
 import com.kakao.sdk.share.ShareClient
@@ -45,6 +46,7 @@ object KakaoUtils {
             ShareClient.instance.shareDefault(context, defaultFeed) { sharingResult, error ->
                 if (error != null) {
                     Logcat.e("카카오톡 공유 실패 : ${error.message}")
+                    Toast.makeText(context, "카카오톡 공유 실패", Toast.LENGTH_SHORT).show()
                 } else if (sharingResult != null) {
                     Logcat.d("카카오톡 공유 성공")
                     sharingResult.intent.let { startActivity(context, it, null) }
@@ -55,20 +57,21 @@ object KakaoUtils {
                 }
             }
         } else {
+            Toast.makeText(context, "카카오톡 설치가 필요합니다.", Toast.LENGTH_SHORT).show()
             // 카카오톡 미설치: 웹 공유 사용 권장
             val sharerUrl = WebSharerClient.instance.makeDefaultUrl(defaultFeed)
 
             try {
                 KakaoCustomTabsClient.openWithDefault(context, sharerUrl)
             } catch (e: UnsupportedOperationException) {
-                // TODO : CustomTabsServiceConnection 지원 브라우저가 없을 때 예외처리
+                Toast.makeText(context, "카카오톡이 지원되는 브라우저가 필요합니다.", Toast.LENGTH_SHORT).show()
             }
 
             // CustomTabsServiceConnection 미지원 브라우저 열기
             try {
                 KakaoCustomTabsClient.open(context, sharerUrl)
             } catch (e: ActivityNotFoundException) {
-                // TODO :디바이스에 설치된 인터넷 브라우저가 없을 때 예외처리
+                Toast.makeText(context, "인터넷 브라우저 설치가 필요합니다.", Toast.LENGTH_SHORT).show()
             }
         }
     }
