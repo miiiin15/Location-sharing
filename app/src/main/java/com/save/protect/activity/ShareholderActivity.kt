@@ -10,15 +10,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.widget.CheckBox
-import android.widget.ImageButton
-import android.widget.TextView
-import androidx.annotation.ColorInt
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
+import android.widget.*
+import com.google.android.gms.location.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
@@ -31,10 +24,12 @@ import com.naver.maps.map.util.MarkerIcons
 import com.save.protect.BaseActivity
 import com.save.protect.R
 import com.save.protect.custom.BottomSheetChat
+import com.save.protect.custom.ButtonListener
 import com.save.protect.data.UserInfo
 import com.save.protect.data.UserManagement
 import com.save.protect.data.enums.UpdateState
-import com.save.protect.database.LocationTransmitter
+import com.save.protect.database.FirebaseReceiver
+import com.save.protect.database.FirebaseTransmitter
 import com.save.protect.helper.Logcat
 import com.save.protect.util.ImageUtils
 import com.save.protect.util.KakaoUtils
@@ -42,7 +37,6 @@ import com.save.protect.util.PermissionUtils.checkShowLocationPermission
 import com.save.protect.util.PermissionUtils.hasLocationPermission
 import com.save.protect.util.PermissionUtils.requestLocationPermission
 import com.save.protect.util.PermissionUtils.showLocationPermissionDialog
-import org.w3c.dom.Text
 
 
 class ShareholderActivity : BaseActivity() {
@@ -51,8 +45,9 @@ class ShareholderActivity : BaseActivity() {
     private lateinit var locationCallback: LocationCallback
 
     private lateinit var mapView: MapView
+    private lateinit var bottomSheetChat: BottomSheetChat
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<BottomSheetChat>
     private lateinit var naverMap: NaverMap
-
     private lateinit var stateText: TextView
     private lateinit var updateIcon: TextView
     private lateinit var button_share: ImageButton
@@ -84,37 +79,7 @@ class ShareholderActivity : BaseActivity() {
         initializeMapView(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         setInitialValues()
-        BottomSheetChat.initBottomSheet(
-            findViewById(R.id.bottom_sheet_chat),
-            onChange = { bttomSheet, newState ->
-                when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                    }
-
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                    }
-
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                    }
-
-                    BottomSheetBehavior.STATE_DRAGGING -> {
-                    }
-
-                    BottomSheetBehavior.STATE_SETTLING -> {
-                    }
-
-                    BottomSheetBehavior.STATE_HALF_EXPANDED -> {
-                    }
-                }
-            },
-            onSlide = { bttomSheet, slideOffset ->
-//                Log.d("바텀시트 slideOffset : ", " $slideOffset")
-            }
-        )
-
         createLocationCallback()
-
-        // 위치 권한 확인
         checkLocationPermission()
 
 
@@ -190,6 +155,67 @@ class ShareholderActivity : BaseActivity() {
         userData = UserManagement.getUserInfo()!!
         userName = if (userData.userName.isNullOrBlank()) userData.userName else "익명의 유저"
 
+        UserManagement.uid.let {
+            FirebaseReceiver.observeMessage(
+                it,
+                listener = { messageData ->
+                    if (getTimeDifference(messageData.date) === "방금 전" && messageData.id != uid) {
+                        Toast.makeText(
+                            applicationContext,
+                            "${messageData.userName} : ${messageData.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                },
+
+                )
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        bottomSheetChat.setTitle("입력창 닫으려면 내리기")
+                        bottomSheetChat.moveFocusInput()
+                        showKeyboard()
+                    }
+
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        bottomSheetChat.setTitle("메시지 보내려면 올리기")
+                    }
+
+                    BottomSheetBehavior.STATE_DRAGGING -> {
+                        closeKeyboard()
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            }
+        })
+
+        bottomSheetChat.setButtonListener(object : ButtonListener {
+            override fun callback() {
+                if (uid.isNullOrBlank()) {
+                    return
+                }
+                if (bottomSheetChat.getMessage().isNullOrBlank()) {
+                    return
+                }
+                FirebaseTransmitter.sendMessage(
+                    documentId = uid!!,
+                    userId = uid!!,
+                    message = bottomSheetChat.getMessage(),
+                    userName = userData.userName,
+                    onSuccess = {},
+                    onFailure = {}
+                )
+            }
+        }
+        )
+
+
         // 값이 null인 경우 처리
         if (markLimit != 0 || updateInterval != 0 || minimumInterval != 0) {
             setting_markLimit = markLimit
@@ -200,6 +226,8 @@ class ShareholderActivity : BaseActivity() {
 
     private fun initializeMapView(savedInstanceState: Bundle?) {
         mapView = findViewById(R.id.map_view)
+        bottomSheetChat = findViewById(R.id.shareholder_chat)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetChat)
         stateText = findViewById(R.id.stateText)
         updateIcon = findViewById(R.id.icon_update)
         button_share = findViewById(R.id.button_share)
@@ -246,9 +274,10 @@ class ShareholderActivity : BaseActivity() {
                 for (location in locationResult.locations) {
                     // 위치 변경 시 작업
                     uid?.let {
-                        LocationTransmitter.sendLocationData(
+                        FirebaseTransmitter.sendLocationData(
                             it,
                             _checkList(location),
+                            userName = userData.userName,
                             onSuccess = {
                                 setMapMarker(
                                     location.latitude,

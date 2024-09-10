@@ -3,9 +3,10 @@ package com.save.protect.database
 import android.annotation.SuppressLint
 import com.google.firebase.firestore.FirebaseFirestore
 import com.save.protect.data.LocationData
+import com.save.protect.data.MessageObject
 import com.save.protect.helper.Logcat
 
-object LocationReceiver {
+object FirebaseReceiver {
 
     @SuppressLint("StaticFieldLeak")
     private val db = FirebaseFirestore.getInstance()
@@ -53,6 +54,23 @@ object LocationReceiver {
             } else {
                 onFailure.invoke()
                 Logcat.d("위치 변화 탐지기 : null")
+            }
+        }
+    }
+
+    fun observeMessage(
+        documentId: String,
+        listener: (MessageObject) -> Unit,
+    ) {
+        val docRef = db.collection("message_list").document(documentId)
+        docRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                val locationData = snapshot.toObject(MessageObject::class.java)
+                locationData?.let { listener(it) }
             }
         }
     }

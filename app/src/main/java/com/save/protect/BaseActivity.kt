@@ -11,6 +11,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.save.protect.custom.LoadingDialog
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.HashMap
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -119,6 +122,67 @@ abstract class BaseActivity : AppCompatActivity() {
 
     fun dpToPx(dp: Float): Float {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
+    }
+
+    fun getTimeDifference(inputTime: String?): String {
+        if (inputTime == null) {
+            return "기록 없음"
+        }
+        // 입력된 시간을 Date 객체로 변환
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val targetDate = dateFormat.parse(inputTime) ?: return "Invalid date format"
+
+        // 현재 시간 가져오기
+        val currentDate = Date()
+
+        // 시간 차이 계산 (밀리초 단위)
+        val diffInMillis = Math.abs(currentDate.time - targetDate.time)
+
+        // 1년, 1개월, 1주, 1일, 1시간, 1분에 해당하는 밀리초
+        val oneYearInMillis = 365L * 24 * 60 * 60 * 1000
+        val oneMonthInMillis = 30L * 24 * 60 * 60 * 1000
+        val oneWeekInMillis = 7L * 24 * 60 * 60 * 1000
+        val oneDayInMillis = 24 * 60 * 60 * 1000
+        val oneHourInMillis = 60 * 60 * 1000
+        val oneMinuteInMillis = 60 * 1000
+
+
+        return when {
+            // 1년 이상 차이
+            diffInMillis >= oneYearInMillis -> {
+                val years = diffInMillis / oneYearInMillis
+                "${years}년 전"
+            }
+            // 1개월 이상 차이
+            diffInMillis >= oneMonthInMillis -> {
+                val months = diffInMillis / oneMonthInMillis
+                "${months}개월 전"
+            }
+            // 1주 이상 차이
+            diffInMillis >= oneWeekInMillis -> {
+                val weeks = diffInMillis / oneWeekInMillis
+                "${weeks}주 전"
+            }
+            // 하루 이상 차이
+            diffInMillis >= oneDayInMillis -> {
+                val days = diffInMillis / oneDayInMillis
+                "${days}일 전"
+            }
+            // 24시간 이내 차이
+            else -> {
+                val hours = diffInMillis / oneHourInMillis
+                val minutes = (diffInMillis % oneHourInMillis) / oneMinuteInMillis
+
+
+                if (hours < 1 && minutes > 0) {
+                    "${minutes}분 전"
+                } else if (hours > 0) {
+                    "${hours}시간 ${minutes}분 전"
+                } else {
+                    "방금 전"
+                }
+            }
+        }
     }
 
 }

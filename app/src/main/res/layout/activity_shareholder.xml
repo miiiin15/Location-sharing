@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="30dp">
+        android:layout_marginBottom="40dp">
 
         <com.naver.maps.map.MapView
             android:id="@+id/map_view"
@@ -46,6 +46,7 @@
             android:visibility="invisible"
             app:layout_constraintStart_toEndOf="@+id/stateText"
             app:layout_constraintTop_toTopOf="parent" />
+
 
         <ImageButton
             android:id="@+id/button_share"
@@ -86,5 +87,11 @@
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include layout="@layout/bottom_sheet_chat" />
+    <com.save.protect.custom.BottomSheetChat
+        android:id="@+id/shareholder_chat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:behavior_peekHeight="100dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

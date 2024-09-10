@@ -5,12 +5,13 @@ import android.location.Location
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.save.protect.data.LocationData
+import com.save.protect.data.MessageObject
 import com.save.protect.helper.Logcat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-object LocationTransmitter {
+object FirebaseTransmitter {
 
     @SuppressLint("StaticFieldLeak")
     private val db = Firebase.firestore
@@ -19,6 +20,7 @@ object LocationTransmitter {
     fun sendLocationData(
         documentId: String,
         list: MutableList<Location>,
+        userName: String,
         onSuccess: () -> Unit,
         onFailure: () -> Unit,
     ) {
@@ -42,7 +44,7 @@ object LocationTransmitter {
         val locationData = LocationData(
             locationList = dataList,
             date = currentDate,
-            userName = "유저 *23#"
+            userName = userName
         )
 
         // Firestore에 특정 문서에 데이터를 전송 또는 업데이트합니다.
@@ -55,6 +57,39 @@ object LocationTransmitter {
             }
             .addOnFailureListener { e ->
                 Logcat.e("위치 송신기 : 문서 업데이트 중 오류 발생 $e")
+                onFailure.invoke()
+            }
+    }
+
+    fun sendMessage(
+        documentId: String,
+        userId:String,
+        message: String,
+        userName: String,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit,
+    ) {
+
+        val currentDate =
+            SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+
+        val messageData = MessageObject(
+            id = userId,
+            message = message,
+            date = currentDate,
+            userName = userName
+        )
+
+        // Firestore에 특정 문서에 데이터를 전송 또는 업데이트합니다.
+        db.collection("message_list")
+            .document(documentId)
+            .set(messageData)
+            .addOnSuccessListener {
+                Logcat.d("메시지 송신기 : 문서 업데이트 완료")
+                onSuccess.invoke()
+            }
+            .addOnFailureListener { e ->
+                Logcat.e("메시지 송신기 : 문서 업데이트 중 오류 발생 $e")
                 onFailure.invoke()
             }
     }
