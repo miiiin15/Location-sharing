@@ -147,6 +147,10 @@ object ImageUtils {
 
     // 이미지 URL을 비트맵으로 변환
     fun loadBitmapFromUrl(context: Context, imageUrl: String, callback: (Bitmap?) -> Unit) {
+        if (context is Activity && context.isDestroyed) {
+            callback(null) // Activity가 파괴된 경우 null 반환
+            return
+        }
         Glide.with(context)
             .asBitmap()
             .load(imageUrl)
