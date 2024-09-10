@@ -4,7 +4,12 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
 import android.widget.CheckBox
+import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.*
@@ -23,11 +28,15 @@ import com.save.protect.R
 import com.save.protect.custom.BottomSheetChat
 import com.save.protect.data.LocationData
 import com.save.protect.data.UserInfo
+import com.save.protect.data.enums.UpdateState
 import com.save.protect.database.LocationReceiver
 import com.save.protect.database.UserInfoManager
 import com.save.protect.util.ImageUtils
 import com.save.protect.util.PermissionUtils
 import org.json.JSONArray
+import java.lang.Math.abs
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class AudienceActivity : AppCompatActivity() {
@@ -39,7 +48,12 @@ class AudienceActivity : AppCompatActivity() {
     private lateinit var naverMap: NaverMap
     private lateinit var docId: String
     private var isAutoFocus = true
+    private var updateState = UpdateState.DEFAULT
 
+    private lateinit var stateText: TextView
+    private lateinit var updateIcon: TextView
+    private lateinit var timeText: TextView
+    private lateinit var refreshButton: ImageButton
     private lateinit var checkboxAutoFocus: CheckBox
 
     // 경로선 객체
@@ -87,6 +101,12 @@ class AudienceActivity : AppCompatActivity() {
             }
         )
 
+        refreshButton.setOnClickListener() {
+            docId?.let {
+                fetchLocationData(it)
+            }
+        }
+
         checkboxAutoFocus.setOnCheckedChangeListener { buttonView, isChecked ->
             isAutoFocus = isChecked
         }
@@ -110,6 +130,10 @@ class AudienceActivity : AppCompatActivity() {
 
     private fun initializeMapView(savedInstanceState: Bundle?) {
         mapView = findViewById(R.id.map_view_audience)
+        stateText = findViewById(R.id.stateText)
+        timeText = findViewById(R.id.timeText)
+        updateIcon = findViewById(R.id.icon_update)
+        refreshButton = findViewById(R.id.button_refresh)
         checkboxAutoFocus = findViewById(R.id.checkbox_autoFocus_audience)
         mapView.onCreate(savedInstanceState)
     }
@@ -118,9 +142,17 @@ class AudienceActivity : AppCompatActivity() {
         super.onStart()
         mapView.onStart()
         docId.let {
-            LocationReceiver.observeLocationData(it) { locationData ->
-                draw(locationData)
-            }
+            LocationReceiver.observeLocationData(it,
+                listener = { locationData ->
+                    timeText.text = "⏱️ " + getTimeDifference(locationData.date)
+                    updateState = UpdateState.SUCCESS
+                    draw(locationData)
+                },
+                onFailure = {
+                    timeText.text = "⏱️ 업데이트 없음"
+                    updateState = UpdateState.FAIL
+                }
+            )
         }
     }
 
@@ -181,15 +213,22 @@ class AudienceActivity : AppCompatActivity() {
 
     // 단발성 위치 수신기
     private fun fetchLocationData(id: String = "") {
-        LocationReceiver.getLocationData(id) { locationData ->
-            draw(locationData)
-        }
+        LocationReceiver.getLocationData(id,
+            listener = { locationData ->
+                timeText.text = "⏱️ " + getTimeDifference(locationData.date)
+                updateState = UpdateState.SUCCESS
+                draw(locationData)
+            },
+            onFailure = {
+                timeText.text = "⏱️ 업데이트 없음"
+                updateState = UpdateState.FAIL
+            }
+        )
     }
 
     private fun fetchUserInfo(id: String = "") {
         UserInfoManager.getUserInfo(id) {
             shareholderInfo = it
-
         }
     }
 
@@ -217,17 +256,17 @@ class AudienceActivity : AppCompatActivity() {
 
     // 경로선 그리기 함수
     @SuppressLint("ResourceAsColor")
-    fun drawPath(coords: MutableList<LatLng>) {
+    fun drawPath(cordList: MutableList<LatLng>) {
 
         mapView.getMapAsync { nMap ->
             naverMap = nMap
 
-            if (coords.isNotEmpty()) {
-                val firstLatLng = coords[0]
+            if (cordList.isNotEmpty()) {
+                val firstLatLng = cordList[0]
 
-                if (coords.size > 2) {
+                if (cordList.size > 2) {
                     // 경로선 좌표 설정
-                    pathOverlay.coords = coords
+                    pathOverlay.coords = cordList
 
                     // 경로선 색상 및 두께 설정 (옵션)
                     pathOverlay.color = Color.WHITE// 색상 설정
@@ -267,11 +306,35 @@ class AudienceActivity : AppCompatActivity() {
 
             marker.position = initialLatLng
             marker.map = naverMap
-            if (shareholderInfo.userName.isNotEmpty()) {
-                marker.captionText = shareholderInfo.userName
-            } else {
-                marker.captionText = "익명의 유저"
+
+            stateText.setTextColor(getStateColor(updateState))
+            marker.captionColor = getStateColor(updateState)
+            marker.captionText =
+                if (shareholderInfo.userName.isNotEmpty()) shareholderInfo.userName else "익명의 유저"
+
+            when (updateState) {
+                UpdateState.DEFAULT -> {
+                    stateText.text = "⏳ 대기"
+                }
+
+                UpdateState.SUCCESS -> {
+                    stateText.text = "✅ 정상"
+                    updateIcon.visibility = View.VISIBLE
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        marker.captionColor = Color.BLACK
+                        updateIcon.visibility = View.INVISIBLE
+                    }, 500)
+                }
+
+                UpdateState.FAIL -> {
+                    stateText.text = "❌ 실패"
+                }
+                else -> {
+                    stateText.text = "⚠️ 오류"
+                }
             }
+
             if (shareholderInfo.imageUrl.isNotEmpty()) {
                 // 마커 이미지를 URL에서 로드하여 설정
                 ImageUtils.loadBitmapFromUrl(this, shareholderInfo.imageUrl) {
@@ -280,9 +343,92 @@ class AudienceActivity : AppCompatActivity() {
                         ImageUtils.resizeAndCropToCircle(it!!, 100, 100, 3, Color.BLACK)
                     )
                 }
+
+
             } else {
                 marker.icon = MarkerIcons.BLACK
                 marker.iconTintColor = Color.LTGRAY
+            }
+        }
+    }
+
+    private fun getStateColor(state: UpdateState): Int {
+        when (state) {
+            UpdateState.DEFAULT -> {
+                return getColor(R.color.disable)
+            }
+
+            UpdateState.SUCCESS -> {
+                return Color.GREEN
+            }
+
+            UpdateState.FAIL -> {
+                return Color.RED
+            }
+
+            else -> {
+                return Color.YELLOW
+            }
+        }
+    }
+
+
+    private fun getTimeDifference(inputTime: String?): String {
+        if (inputTime == null) {
+            return "기록 없음"
+        }
+        // 입력된 시간을 Date 객체로 변환
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val targetDate = dateFormat.parse(inputTime) ?: return "Invalid date format"
+
+        // 현재 시간 가져오기
+        val currentDate = Date()
+
+        // 시간 차이 계산 (밀리초 단위)
+        val diffInMillis = abs(currentDate.time - targetDate.time)
+
+        // 1년, 1개월, 1주, 1일, 1시간, 1분에 해당하는 밀리초
+        val oneYearInMillis = 365L * 24 * 60 * 60 * 1000
+        val oneMonthInMillis = 30L * 24 * 60 * 60 * 1000
+        val oneWeekInMillis = 7L * 24 * 60 * 60 * 1000
+        val oneDayInMillis = 24 * 60 * 60 * 1000
+        val oneHourInMillis = 60 * 60 * 1000
+        val oneMinuteInMillis = 60 * 1000
+
+        return when {
+            // 1년 이상 차이
+            diffInMillis >= oneYearInMillis -> {
+                val years = diffInMillis / oneYearInMillis
+                "${years}년 전"
+            }
+            // 1개월 이상 차이
+            diffInMillis >= oneMonthInMillis -> {
+                val months = diffInMillis / oneMonthInMillis
+                "${months}개월 전"
+            }
+            // 1주 이상 차이
+            diffInMillis >= oneWeekInMillis -> {
+                val weeks = diffInMillis / oneWeekInMillis
+                "${weeks}주 전"
+            }
+            // 하루 이상 차이
+            diffInMillis >= oneDayInMillis -> {
+                val days = diffInMillis / oneDayInMillis
+                "${days}일 전"
+            }
+            // 24시간 이내 차이
+            else -> {
+                val hours = diffInMillis / oneHourInMillis
+                val minutes = (diffInMillis % oneHourInMillis) / oneMinuteInMillis
+
+                if (hours > 0) {
+                    "${hours}시간 ${minutes}분 전"
+                }
+                else if (hours < 1 && minutes > 0) {
+                    "${minutes}분 전"
+                } else {
+                    "방금 전"
+                }
             }
         }
     }

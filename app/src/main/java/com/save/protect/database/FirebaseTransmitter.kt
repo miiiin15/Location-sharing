@@ -16,7 +16,12 @@ object LocationTransmitter {
     private val db = Firebase.firestore
 
     // 사용자가 제공한 문서 ID를 전달받는 함수
-    fun sendLocationData(documentId: String, list: MutableList<Location>) {
+    fun sendLocationData(
+        documentId: String,
+        list: MutableList<Location>,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit,
+    ) {
         val dataList = mutableListOf<MutableMap<String, Any?>>()
 
         for (location in list) {
@@ -42,13 +47,15 @@ object LocationTransmitter {
 
         // Firestore에 특정 문서에 데이터를 전송 또는 업데이트합니다.
         db.collection("locations_test")
-            .document(documentId) // 전달받은 문서 ID를 사용합니다.
-            .set(locationData) // set()을 사용하여 문서를 업데이트하거나 생성합니다.
+            .document(documentId)
+            .set(locationData)
             .addOnSuccessListener {
                 Logcat.d("위치 송신기 : 문서 업데이트 완료")
+                onSuccess.invoke()
             }
             .addOnFailureListener { e ->
                 Logcat.e("위치 송신기 : 문서 업데이트 중 오류 발생 $e")
+                onFailure.invoke()
             }
     }
 

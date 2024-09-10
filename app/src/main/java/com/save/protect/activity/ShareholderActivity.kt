@@ -7,8 +7,13 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageButton
+import android.widget.TextView
+import androidx.annotation.ColorInt
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -28,6 +33,7 @@ import com.save.protect.R
 import com.save.protect.custom.BottomSheetChat
 import com.save.protect.data.UserInfo
 import com.save.protect.data.UserManagement
+import com.save.protect.data.enums.UpdateState
 import com.save.protect.database.LocationTransmitter
 import com.save.protect.helper.Logcat
 import com.save.protect.util.ImageUtils
@@ -36,6 +42,8 @@ import com.save.protect.util.PermissionUtils.checkShowLocationPermission
 import com.save.protect.util.PermissionUtils.hasLocationPermission
 import com.save.protect.util.PermissionUtils.requestLocationPermission
 import com.save.protect.util.PermissionUtils.showLocationPermissionDialog
+import org.w3c.dom.Text
+
 
 class ShareholderActivity : BaseActivity() {
 
@@ -45,15 +53,20 @@ class ShareholderActivity : BaseActivity() {
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
 
+    private lateinit var stateText: TextView
+    private lateinit var updateIcon: TextView
     private lateinit var button_share: ImageButton
     private lateinit var button_invite: ImageButton
     private lateinit var checkboxAutoFocus: CheckBox
 
     private lateinit var userData: UserInfo
+    private lateinit var userName: String
     private var uid: String? = null
     private var isAutoFocus = true
     private var marker = Marker()
     private val markSize = 100
+
+    private var updateState: UpdateState = UpdateState.DEFAULT
 
 
     // 사용자 입력값
@@ -175,6 +188,7 @@ class ShareholderActivity : BaseActivity() {
         val minimumInterval = intent.getIntExtra("MINIMUM_INTERVAL", 3)
         uid = UserManagement.uid
         userData = UserManagement.getUserInfo()!!
+        userName = if (userData.userName.isNullOrBlank()) userData.userName else "익명의 유저"
 
         // 값이 null인 경우 처리
         if (markLimit != 0 || updateInterval != 0 || minimumInterval != 0) {
@@ -186,6 +200,8 @@ class ShareholderActivity : BaseActivity() {
 
     private fun initializeMapView(savedInstanceState: Bundle?) {
         mapView = findViewById(R.id.map_view)
+        stateText = findViewById(R.id.stateText)
+        updateIcon = findViewById(R.id.icon_update)
         button_share = findViewById(R.id.button_share)
         button_invite = findViewById(R.id.button_invite)
         checkboxAutoFocus = findViewById(R.id.checkbox_autoFocus)
@@ -229,8 +245,25 @@ class ShareholderActivity : BaseActivity() {
                 locationResult ?: return
                 for (location in locationResult.locations) {
                     // 위치 변경 시 작업
-                    setMapMarker(location.latitude, location.longitude)
-                    uid?.let { LocationTransmitter.sendLocationData(it, _checkList(location)) }
+                    uid?.let {
+                        LocationTransmitter.sendLocationData(
+                            it,
+                            _checkList(location),
+                            onSuccess = {
+                                setMapMarker(
+                                    location.latitude,
+                                    location.longitude,
+                                    UpdateState.SUCCESS
+                                )
+                            },
+                            onFailure = {
+                                setMapMarker(
+                                    location.latitude,
+                                    location.longitude,
+                                    UpdateState.FAIL
+                                )
+                            })
+                    }
                 }
             }
         }
@@ -260,7 +293,13 @@ class ShareholderActivity : BaseActivity() {
     }
 
     // 지도에 마커 표시
-    private fun setMapMarker(userLatitude: Double, userLongitude: Double) {
+    private fun setMapMarker(
+        userLatitude: Double,
+        userLongitude: Double,
+        updateState: UpdateState
+    ) {
+
+        this.updateState = updateState
 
         mapView.getMapAsync { nMap ->
             naverMap = nMap
@@ -276,11 +315,34 @@ class ShareholderActivity : BaseActivity() {
 
             marker.position = initialLatLng
             marker.map = naverMap
-            if (userData.userName.isNotEmpty()) {
-                marker.captionText = userData.userName
-            } else {
-                marker.captionText = "익명의 유저"
+            marker.captionText = userData.userName
+
+            stateText.setTextColor(getStateColor(updateState))
+            marker.captionColor = getStateColor(updateState)
+
+            when (updateState) {
+                UpdateState.DEFAULT -> {
+                    stateText.text = "⏳ 대기"
+                }
+
+                UpdateState.SUCCESS -> {
+                    stateText.text = "✅ 정상"
+                    updateIcon.visibility = View.VISIBLE
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        marker.captionColor = Color.BLACK
+                        updateIcon.visibility = View.INVISIBLE
+                    }, 500)
+                }
+
+                UpdateState.FAIL -> {
+                    stateText.text = "❌ 실패"
+                }
+                else -> {
+                    stateText.text = "⚠️ 오류"
+                }
             }
+
             if (userData.imageUrl.isNotEmpty()) {
                 // 마커 이미지를 URL에서 로드하여 설정
                 ImageUtils.loadBitmapFromUrl(this, userData.imageUrl) {
@@ -292,6 +354,26 @@ class ShareholderActivity : BaseActivity() {
             } else {
                 marker.icon = MarkerIcons.BLACK
                 marker.iconTintColor = Color.LTGRAY
+            }
+        }
+    }
+
+    private fun getStateColor(state: UpdateState): Int {
+        when (state) {
+            UpdateState.DEFAULT -> {
+                return getColor(R.color.disable)
+            }
+
+            UpdateState.SUCCESS -> {
+                return Color.GREEN
+            }
+
+            UpdateState.FAIL -> {
+                return Color.RED
+            }
+
+            else -> {
+                return Color.YELLOW
             }
         }
     }

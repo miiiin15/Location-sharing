@@ -7,13 +7,70 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="30dp"
-        >
+        android:layout_marginBottom="30dp">
 
         <com.naver.maps.map.MapView
             android:id="@+id/map_view_audience"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/stateText"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:layout_marginLeft="@dimen/padding_Horizon"
+            android:layout_marginTop="@dimen/padding_Vertical"
+            android:background="@color/black"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="⏳ 대기"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/icon_update"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="@dimen/padding_Vertical"
+            android:gravity="center"
+            android:text="⤵️️"
+            android:textSize="18sp"
+            android:visibility="invisible"
+            app:layout_constraintStart_toEndOf="@+id/stateText"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/timeText"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:layout_marginTop="@dimen/padding_Vertical"
+            android:layout_marginEnd="@dimen/padding_Horizon"
+            android:background="@color/black"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="⏱️ 없음"
+            android:textColor="@color/error"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/button_refresh"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="@dimen/padding_Vertical"
+            android:layout_marginEnd="@dimen/padding_Horizon"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="카카오톡 초대"
+            android:scaleType="centerCrop"
+            android:src="@drawable/icon_refresh"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timeText" />
 
         <CheckBox
             android:id="@+id/checkbox_autoFocus_audience"

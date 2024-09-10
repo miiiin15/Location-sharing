@@ -11,7 +11,11 @@ object LocationReceiver {
     private val db = FirebaseFirestore.getInstance()
 
     // 사용자가 입력한 문서 ID를 전달받는 함수
-    fun getLocationData(documentId: String, listener: (LocationData) -> Unit) {
+    fun getLocationData(
+        documentId: String,
+        listener: (LocationData) -> Unit,
+        onFailure: () -> Unit
+    ) {
         db.collection("locations_test")
             .document(documentId) // 사용자가 입력한 문서 ID를 여기에 지정합니다.
             .addSnapshotListener { snapshot, e ->
@@ -23,12 +27,18 @@ object LocationReceiver {
                 if (snapshot != null && snapshot.exists()) {
                     val locationData = snapshot.toObject(LocationData::class.java)
                     locationData?.let { listener(it) }
+                } else {
+                    onFailure.invoke()
                 }
             }
     }
 
     // 스냅샷 리스너
-    fun observeLocationData(documentId: String, listener: (LocationData) -> Unit) {
+    fun observeLocationData(
+        documentId: String,
+        listener: (LocationData) -> Unit,
+        onFailure: () -> Unit
+    ) {
         val docRef = db.collection("locations_test").document(documentId)
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -41,6 +51,7 @@ object LocationReceiver {
                 val locationData = snapshot.toObject(LocationData::class.java)
                 locationData?.let { listener(it) }
             } else {
+                onFailure.invoke()
                 Logcat.d("위치 변화 탐지기 : null")
             }
         }
