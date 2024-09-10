@@ -90,7 +90,8 @@ class ShareholderActivity : BaseActivity() {
 
 
         binding.buttonInvite.setOnClickListener {
-            KakaoUtils.shareText(this, "위치공유 초대", "위치공유 초대가 왔습니다.", "${uid}")
+            val name = UserManagement.getUserInfo()?.userName ?: "익명의 유저"
+            KakaoUtils.shareText(this, "${name}님의 초대", "위치공유 초대가 왔습니다.", "${uid}")
         }
 
         binding.buttonShare.setOnClickListener {

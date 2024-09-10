@@ -86,6 +86,7 @@ class MainActivity : BaseActivity() {
     private fun enterAudience(input: String) {
         val intent = Intent(this, AudienceActivity::class.java)
         intent.putExtra("doc_id", input)
+        DocIdManagement.resetReceivedId()
         startActivity(intent)
     }
 
