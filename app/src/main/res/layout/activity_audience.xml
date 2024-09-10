@@ -65,22 +65,33 @@
             android:layout_marginTop="@dimen/padding_Vertical"
             android:layout_marginEnd="@dimen/padding_Horizon"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="카카오톡 초대"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:src="@drawable/icon_refresh"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/timeText" />
+
+        <ImageButton
+            android:id="@+id/button_location"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/protect_logo"
+            android:scaleType="centerCrop"
+            android:layout_marginStart="@dimen/padding_Horizon"
+            android:layout_marginBottom="50dp"
+            app:layout_constraintBottom_toBottomOf="@id/map_view_audience"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <CheckBox
             android:id="@+id/checkbox_autoFocus_audience"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/padding_Horizon"
-            android:layout_marginBottom="@dimen/padding_Vertical"
+            android:layout_marginBottom="50dp"
             android:checked="true"
             android:text="자동 추적"
             android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/map_view_audience"
             app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

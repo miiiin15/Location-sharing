@@ -64,6 +64,8 @@ object FirebaseTransmitter {
     fun sendMessage(
         documentId: String,
         userId:String,
+        latitude:Double?=null,
+        longitude:Double?=null,
         message: String,
         userName: String,
         onSuccess: () -> Unit,
@@ -75,6 +77,8 @@ object FirebaseTransmitter {
 
         val messageData = MessageObject(
             id = userId,
+            latitude=latitude,
+            longitude=longitude,
             message = message,
             date = currentDate,
             userName = userName
