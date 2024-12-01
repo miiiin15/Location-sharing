@@ -42,7 +42,7 @@ class SplashActivity : AppCompatActivity(), PermissionResultListener {
 
     // 위치 권한 확인
     private fun checkLocationPermission() {
-        binding.stateText.text = "위치 권한 동의가 필요합니다."
+        binding.splashStateTextView.text = "위치 권한 동의가 필요합니다."
         when {
             PermissionUtils.hasLocationPermission(this) -> {
                 next()
@@ -72,14 +72,14 @@ class SplashActivity : AppCompatActivity(), PermissionResultListener {
         val deepLinkValue = data?.getQueryParameter("doc_id")
 
         if (deepLinkValue != null) {
-            binding.stateText.text = "초대 받은 사용자 입니다."
+            binding.splashStateTextView.text = "초대 받은 사용자 입니다."
             DocIdManagement.setReceivedId(deepLinkValue)
         }
     }
 
 
     private fun next() {
-        binding.stateText.text = "위치 권한 확인 완료"
+        binding.splashStateTextView.text = "위치 권한 확인 완료"
         val intent = Intent(this, SigninActivity::class.java)
         startActivity(intent)
         finish()

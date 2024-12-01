@@ -16,8 +16,6 @@ class LoadingDialog : DialogFragment() {
 
     lateinit var binding: DialogLoadingBinding
 
-    // isAdded 등의 플래그가 변경되기 전에 show를 호출할 수 있으므로
-    // 별도의 플래그를 둔다.
     private var isLoading = false
 
 
@@ -38,7 +36,7 @@ class LoadingDialog : DialogFragment() {
 
         binding.lifecycleOwner = this
 
-        binding.pgb.let {
+        binding.loadingImageView.let {
             Glide.with(this).load(R.raw.load).into(it)
         }
 

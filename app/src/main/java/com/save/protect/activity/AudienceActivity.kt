@@ -71,7 +71,7 @@ class AudienceActivity : BaseActivity() {
         @SuppressLint("SetTextI18n")
         override fun run() {
             handler.postDelayed(this, 60000)
-            binding.timeText.text = "⏱️ " + getTimeDifference(updateTime)
+            binding.timeTextView.text = "⏱️ " + getTimeDifference(updateTime)
             updateTime = updateTime
 
             if (updated) {
@@ -102,24 +102,24 @@ class AudienceActivity : BaseActivity() {
     }
 
     private fun initializeMapView(savedInstanceState: Bundle?) {
-        binding.mapViewAudience.onCreate(savedInstanceState)
+        binding.audienceMapView.onCreate(savedInstanceState)
     }
 
     override fun onStart() {
         super.onStart()
-        binding.mapViewAudience.onStart()
+        binding.audienceMapView.onStart()
         docId.let {
             FirebaseReceiver.observeLocationData(it,
                 listener = { locationData ->
                     updateState = UpdateState.SUCCESS
                     updateTime = locationData.date
-                    binding.timeText.text = "⏱️ " + getTimeDifference(locationData.date)
+                    binding.timeTextView.text = "⏱️ " + getTimeDifference(locationData.date)
                     draw(locationData)
                     updateUIBasedOnState()
                 },
                 onFailure = {
                     updateState = UpdateState.FAIL
-                    binding.timeText.text = "⏱️ 업데이트 없음"
+                    binding.timeTextView.text = "⏱️ 업데이트 없음"
                     updateUIBasedOnState()
                 }
             )
@@ -128,36 +128,36 @@ class AudienceActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        binding.mapViewAudience.onResume()
+        binding.audienceMapView.onResume()
         docId.let { fetchLocationData(it) }
         startTask()
     }
 
     override fun onPause() {
         super.onPause()
-        binding.mapViewAudience.onPause()
+        binding.audienceMapView.onPause()
         stopTask()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        binding.mapViewAudience.onSaveInstanceState(outState)
+        binding.audienceMapView.onSaveInstanceState(outState)
     }
 
     override fun onStop() {
         super.onStop()
-        binding.mapViewAudience.onStop()
+        binding.audienceMapView.onStop()
         listenerRegistration?.remove()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.mapViewAudience.onDestroy()
+        binding.audienceMapView.onDestroy()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        binding.mapViewAudience.onLowMemory()
+        binding.audienceMapView.onLowMemory()
     }
 
     private fun startTask() {
@@ -241,11 +241,11 @@ class AudienceActivity : BaseActivity() {
         }
         )
 
-        binding.buttonRefresh.setOnClickListener {
+        binding.refreshButton.setOnClickListener {
             docId.let { fetchLocationData(it) }
         }
 
-        binding.buttonLocation.setOnClickListener {
+        binding.locationButton.setOnClickListener {
             getCurrentLocation {
                 setMapMarker(
                     it?.latitude,
@@ -256,7 +256,7 @@ class AudienceActivity : BaseActivity() {
             }
         }
 
-        binding.checkboxAutoFocusAudience.setOnCheckedChangeListener { _, isChecked ->
+        binding.autoFocusAudienceCheckBox.setOnCheckedChangeListener { _, isChecked ->
             isAutoFocus = isChecked
         }
     }
@@ -287,13 +287,13 @@ class AudienceActivity : BaseActivity() {
             listener = { locationData ->
                 updateState = UpdateState.SUCCESS
                 updateTime = locationData.date
-                binding.timeText.text = "⏱️ " + getTimeDifference(locationData.date)
+                binding.timeTextView.text = "⏱️ " + getTimeDifference(locationData.date)
                 draw(locationData)
                 updateUIBasedOnState()
             },
             onFailure = {
                 updateState = UpdateState.FAIL
-                binding.timeText.text = "⏱️ 업데이트 없음"
+                binding.timeTextView.text = "⏱️ 업데이트 없음"
                 updateUIBasedOnState()
             }
         )
@@ -312,12 +312,12 @@ class AudienceActivity : BaseActivity() {
         }
 
         // 상태 텍스트와 색상 설정
-        binding.stateText.text = text
-        binding.stateText.setTextColor(textColor)
+        binding.stateTextView.text = text
+        binding.stateTextView.setTextColor(textColor)
 
 
         // 아이콘 업데이트 상태 설정
-        binding.iconUpdate.visibility = iconVisibility
+        binding.updateIconTextView.visibility = iconVisibility
 
         // 추가 상태별 작업
         if (updateState == UpdateState.SUCCESS) {
@@ -325,7 +325,7 @@ class AudienceActivity : BaseActivity() {
             shareholderMarker.captionColor = textColor
             Handler(Looper.getMainLooper()).postDelayed({
                 shareholderMarker.captionColor = Color.BLACK
-                binding.iconUpdate.visibility = View.INVISIBLE
+                binding.updateIconTextView.visibility = View.INVISIBLE
             }, 500)
         }
     }
@@ -432,7 +432,7 @@ class AudienceActivity : BaseActivity() {
 
 
     private fun withMap(action: (NaverMap) -> Unit) {
-        binding.mapViewAudience.getMapAsync { nMap ->
+        binding.audienceMapView.getMapAsync { nMap ->
             naverMap = nMap
             action(nMap)
         }

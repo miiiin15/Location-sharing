@@ -35,7 +35,7 @@ class MainActivity : BaseActivity() {
         checkReceivedId()
         init()
 
-        binding.buttonUserInfo.setOnClickListener {
+        binding.userInfoButton.setOnClickListener {
             if (UserManagement.isGuest) {
                 Toast.makeText(this, "비회원은 이용할 수 없습니다.", Toast.LENGTH_SHORT).show()
             } else {
@@ -43,12 +43,12 @@ class MainActivity : BaseActivity() {
                 startActivity(intent)
             }
         }
-        binding.buttonOpen.setOnClickListener {
+        binding.shareholderButton.setOnClickListener {
             val intent = Intent(this, CustomShareholderActivity::class.java)
             startActivity(intent)
         }
 
-        binding.buttonEnter.setOnClickListener {
+        binding.audienceButton.setOnClickListener {
             // 버튼을 누르면 다이얼로그를 띄웁니다.
             showInputDialog()
         }
@@ -97,29 +97,29 @@ class MainActivity : BaseActivity() {
         val copiedText = clipboardUtils.getClipboardText()
         val builder = AlertDialog.Builder(this)
         val inflater = layoutInflater
-        val dialogView = inflater.inflate(R.layout.dialog_audience, null)
+        val audienceDialog = inflater.inflate(R.layout.audience_dialog, null)
 
-        val editTextInvite = dialogView.findViewById<CustomInput>(R.id.editText_invite)
-        val buttonPaste = dialogView.findViewById<Button>(R.id.button_paste)
-        val buttonConfirm = dialogView.findViewById<Button>(R.id.button_confirm)
-        val buttonCancel = dialogView.findViewById<Button>(R.id.button_cancel)
+        val codeInput = audienceDialog.findViewById<CustomInput>(R.id.code_input)
+        val pasteButton = audienceDialog.findViewById<Button>(R.id.paste_button)
+        val confirmButton = audienceDialog.findViewById<Button>(R.id.confirm_button)
+        val cancelButton = audienceDialog.findViewById<Button>(R.id.cancel_button)
 
-        builder.setView(dialogView)
+        builder.setView(audienceDialog)
         val dialog = builder.create()
 
-        editTextInvite.setIsValidListener(object : IsValidListener {
+        codeInput.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
                 return text.isNotEmpty()
             }
         })
 
         // 붙여넣기 버튼에 아무 동작을 넣지 않음
-        buttonPaste.setOnClickListener {
-            copiedText.let { editTextInvite.setText(it) }
+        pasteButton.setOnClickListener {
+            copiedText.let { codeInput.setText(it) }
         }
 
-        buttonConfirm.setOnClickListener {
-            val userInput = editTextInvite.text.toString()
+        confirmButton.setOnClickListener {
+            val userInput = codeInput.text.toString()
             if (userInput.length in 1..40) {
                 // 최대 40자 이내의 문자열이 입력된 경우에만 확인 버튼 동작 추가
                 enterAudience(userInput)
@@ -129,7 +129,7 @@ class MainActivity : BaseActivity() {
             }
         }
 
-        buttonCancel.setOnClickListener {
+        cancelButton.setOnClickListener {
             dialog.dismiss() // 다이얼로그 닫기
         }
 

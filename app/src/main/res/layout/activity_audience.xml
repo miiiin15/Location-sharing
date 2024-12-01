@@ -9,12 +9,12 @@
         android:layout_height="match_parent">
 
         <com.naver.maps.map.MapView
-            android:id="@+id/map_view_audience"
+            android:id="@+id/audience_map_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
         <TextView
-            android:id="@+id/stateText"
+            android:id="@+id/state_text_view"
             android:layout_width="wrap_content"
             android:layout_height="25dp"
             android:layout_marginLeft="@dimen/padding_Horizon"
@@ -30,7 +30,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/icon_update"
+            android:id="@+id/update_icon_text_view"
             android:layout_width="wrap_content"
             android:layout_height="25dp"
             android:layout_marginLeft="4dp"
@@ -39,11 +39,11 @@
             android:text="⤵️️"
             android:textSize="18sp"
             android:visibility="invisible"
-            app:layout_constraintStart_toEndOf="@+id/stateText"
+            app:layout_constraintStart_toEndOf="@+id/state_text_view"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/timeText"
+            android:id="@+id/time_text_view"
             android:layout_width="wrap_content"
             android:layout_height="25dp"
             android:layout_marginTop="@dimen/padding_Vertical"
@@ -59,7 +59,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/button_refresh"
+            android:id="@+id/refresh_button"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_marginTop="@dimen/padding_Vertical"
@@ -68,10 +68,10 @@
             android:scaleType="fitCenter"
             android:src="@drawable/icon_refresh"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/timeText" />
+            app:layout_constraintTop_toBottomOf="@+id/time_text_view" />
 
         <ImageButton
-            android:id="@+id/button_location"
+            android:id="@+id/location_button"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -79,11 +79,11 @@
             android:scaleType="centerCrop"
             android:layout_marginStart="@dimen/padding_Horizon"
             android:layout_marginBottom="50dp"
-            app:layout_constraintBottom_toBottomOf="@id/map_view_audience"
+            app:layout_constraintBottom_toBottomOf="@id/audience_map_view"
             app:layout_constraintStart_toStartOf="parent" />
 
         <CheckBox
-            android:id="@+id/checkbox_autoFocus_audience"
+            android:id="@+id/auto_focus_audience_check_box"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/padding_Horizon"
@@ -91,7 +91,7 @@
             android:checked="true"
             android:text="자동 추적"
             android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@id/map_view_audience"
+            app:layout_constraintBottom_toBottomOf="@id/audience_map_view"
             app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

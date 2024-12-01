@@ -12,8 +12,8 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.save.protect.custom.LoadingDialog
 import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.HashMap
+import java.util.Date
+import java.util.Locale
 
 abstract class BaseActivity : AppCompatActivity() {
 
@@ -33,13 +33,13 @@ abstract class BaseActivity : AppCompatActivity() {
     // 단순 ActionUp 일 때만 키보드 숨기기
     val editTextActionMoveCount = HashMap<EditText, Int>()
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
 
         currentFocus?.let {
             if (it is EditText) {
 
                 // 터치 뗄 때
-                if (ev?.action === MotionEvent.ACTION_UP) {
+                if (event?.action === MotionEvent.ACTION_UP) {
 
                     // ACTION_MOVE 이력이 없는 경우
                     if (editTextActionMoveCount.get(it) == null) {
@@ -47,7 +47,7 @@ abstract class BaseActivity : AppCompatActivity() {
                         // EditText 바깥쪽 터치 일 때 키보드 숨기기
                         val outRect = Rect()
                         it.getGlobalVisibleRect(outRect)
-                        if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+                        if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
                             it.clearFocus()
 
                             val imm =
@@ -68,7 +68,7 @@ abstract class BaseActivity : AppCompatActivity() {
                                 // EditText 바깥쪽 터치 일 때 키보드 숨기기
                                 val outRect = Rect()
                                 it.getGlobalVisibleRect(outRect)
-                                if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+                                if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
                                     it.clearFocus()
 
                                     val imm =
@@ -82,7 +82,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 }
 
                 // 스크롤링
-                else if (ev?.action === MotionEvent.ACTION_MOVE) {
+                else if (event?.action === MotionEvent.ACTION_MOVE) {
 
                     // ACTION_MOVE 이력이 없는 경우
                     if (editTextActionMoveCount.get(it) == null) {
@@ -100,7 +100,7 @@ abstract class BaseActivity : AppCompatActivity() {
             }
         }
 
-        return super.dispatchTouchEvent(ev)
+        return super.dispatchTouchEvent(event)
     }
 
 

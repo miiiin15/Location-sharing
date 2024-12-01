@@ -22,19 +22,19 @@ class CustomShareholderActivity : AppCompatActivity() {
 
         // TODO : 값검사 에러 return 컴포넌트 내부기능으로 만들기
         // TODO : toInt 때문에 발생하는 NumberFormatException 개선하기
-        binding.editTextMarkLimit.setIsValidListener(object : IsValidListener {
+        binding.markLimitInput.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
                 return text.isNotEmpty() && text.toInt() in 1..10
             }
         })
 
-        binding.editTextUpdateInterval.setIsValidListener(object : IsValidListener {
+        binding.updateIntervalInput.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
                 return text.isNotEmpty() && text.toInt() in 1..60
             }
         })
 
-        binding.editTextMinimumInterval.setIsValidListener(object : IsValidListener {
+        binding.minimumIntervalInput.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
                 return text.isNotEmpty() && text.toInt() in 1..60
             }
@@ -42,11 +42,11 @@ class CustomShareholderActivity : AppCompatActivity() {
 
 
 
-        val buttonOpenNextScreen: Button = findViewById(R.id.button_openNextScreen)
-        buttonOpenNextScreen.setOnClickListener {
-            val markLimitText = binding.editTextMarkLimit.text.toString()
-            val updateIntervalText = binding.editTextUpdateInterval.text.toString()
-            val minimumIntervalText = binding.editTextMinimumInterval.text.toString()
+        val finishButton: Button = findViewById(R.id.finish_button)
+        finishButton.setOnClickListener {
+            val markLimitText = binding.markLimitInput.text.toString()
+            val updateIntervalText = binding.updateIntervalInput.text.toString()
+            val minimumIntervalText = binding.minimumIntervalInput.text.toString()
 
             // 입력 값 검증
             if (isValidInput(markLimitText, updateIntervalText, minimumIntervalText)) {

@@ -89,17 +89,17 @@ class ShareholderActivity : BaseActivity() {
         checkLocationPermission()
 
 
-        binding.buttonInvite.setOnClickListener {
+        binding.inviteImageButton.setOnClickListener {
             val name = UserManagement.getUserInfo()?.userName ?: "익명의 유저"
             KakaoUtils.shareText(this, "${name}님의 초대", "위치공유 초대가 왔습니다.", "${uid}")
         }
 
-        binding.buttonShare.setOnClickListener {
+        binding.shareImageButton.setOnClickListener {
             shareText(this, "${uid}")
 
         }
 
-        binding.checkboxAutoFocus.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.autoFocusCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
             isAutoFocus = isChecked
         }
 
@@ -108,39 +108,39 @@ class ShareholderActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        binding.mapView.onStart()
+        binding.shareholderMapView.onStart()
     }
 
     override fun onResume() {
         super.onResume()
-        binding.mapView.onResume()
+        binding.shareholderMapView.onResume()
         startLocationUpdates(setting_updateInterval * 100L, setting_minimunInterval * 100L)
     }
 
     override fun onPause() {
         super.onPause()
-        binding.mapView.onPause()
+        binding.shareholderMapView.onPause()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        binding.mapView.onSaveInstanceState(outState)
+        binding.shareholderMapView.onSaveInstanceState(outState)
     }
 
     override fun onStop() {
         super.onStop()
-        binding.mapView.onStop()
+        binding.shareholderMapView.onStop()
         stopLocationUpdates()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.mapView.onDestroy()
+        binding.shareholderMapView.onDestroy()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        binding.mapView.onLowMemory()
+        binding.shareholderMapView.onLowMemory()
     }
 
     fun shareText(context: Context, textToShare: String) {
@@ -256,7 +256,7 @@ class ShareholderActivity : BaseActivity() {
     }
 
     private fun initializeMapView(savedInstanceState: Bundle?) {
-        binding.mapView.onCreate(savedInstanceState)
+        binding.shareholderMapView.onCreate(savedInstanceState)
     }
 
     // 위치 권한 확인
@@ -363,7 +363,7 @@ class ShareholderActivity : BaseActivity() {
             this.updateState = updateState
         }
 
-        binding.mapView.getMapAsync { nMap ->
+        binding.shareholderMapView.getMapAsync { nMap ->
             naverMap = nMap
 
             val initialLatLng = LatLng(userLatitude, userLongitude)
@@ -380,30 +380,30 @@ class ShareholderActivity : BaseActivity() {
 
 
             if (!isAudience) {
-                binding.stateText.setTextColor(getStateColor(updateState!!))
+                binding.stateTextView.setTextColor(getStateColor(updateState!!))
                 marker.captionColor = getStateColor(updateState)
 
                 when (updateState) {
                     UpdateState.DEFAULT -> {
-                        binding.stateText.text = "⏳ 대기"
+                        binding.stateTextView.text = "⏳ 대기"
                     }
 
                     UpdateState.SUCCESS -> {
-                        binding.stateText.text = "✅ 정상"
-                        binding.iconUpdate.visibility = View.VISIBLE
+                        binding.stateTextView.text = "✅ 정상"
+                        binding.updateIconTextView.visibility = View.VISIBLE
 
                         Handler(Looper.getMainLooper()).postDelayed({
                             marker.captionColor = Color.BLACK
-                            binding.iconUpdate.visibility = View.INVISIBLE
+                            binding.updateIconTextView.visibility = View.INVISIBLE
                         }, 500)
                     }
 
                     UpdateState.FAIL -> {
-                        binding.stateText.text = "❌ 실패"
+                        binding.stateTextView.text = "❌ 실패"
                     }
 
                     else -> {
-                        binding.stateText.text = "⚠️ 오류"
+                        binding.stateTextView.text = "⚠️ 오류"
                     }
                 }
             }

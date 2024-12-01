@@ -19,7 +19,7 @@
         tools:context=".activity.ProfileActivity">
 
         <TextView
-            android:id="@+id/textViewTitle"
+            android:id="@+id/profile_title_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -35,7 +35,7 @@
 
             <!-- 프로필 이미지를 표시할 ImageView -->
             <ImageView
-                android:id="@+id/imageViewProfile"
+                android:id="@+id/profile_image_view"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:layout_marginVertical="@dimen/padding_Vertical"
@@ -45,7 +45,7 @@
 
             <!-- 사용자 닉네임을 입력할 EditText -->
             <com.save.protect.custom.CustomInput
-                android:id="@+id/editTextNickname"
+                android:id="@+id/nickname_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="사용자 닉네임을 입력하세요"
@@ -75,7 +75,7 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/imagePreview"
+                android:id="@+id/preview_image_view"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
         </LinearLayout>
 
         <com.save.protect.custom.CustomButton
-            android:id="@+id/buttonRegister"
+            android:id="@+id/register_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="등록" />

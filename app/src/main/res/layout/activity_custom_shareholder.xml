@@ -19,7 +19,7 @@
 
         <!-- 타이틀 텍스트 -->
         <TextView
-            android:id="@+id/textViewTitle"
+            android:id="@+id/custom_shareholder_title_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
@@ -38,7 +38,7 @@
             android:gravity="center_vertical">
 
             <TextView
-                android:id="@+id/textView_markLimit"
+                android:id="@+id/markLimit_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
@@ -49,7 +49,7 @@
                 android:fontFamily="sans-serif-medium" />
 
             <com.save.protect.custom.CustomInput
-                android:id="@+id/editText_markLimit"
+                android:id="@+id/mark_limit_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -57,7 +57,7 @@
                 android:inputType="number" />
 
             <TextView
-                android:id="@+id/textView_updateInterval"
+                android:id="@+id/update_interval_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -67,7 +67,7 @@
                 android:fontFamily="sans-serif-medium" />
 
             <com.save.protect.custom.CustomInput
-                android:id="@+id/editText_updateInterval"
+                android:id="@+id/update_interval_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -75,7 +75,7 @@
                 android:inputType="number" />
 
             <TextView
-                android:id="@+id/textView_minimumInterval"
+                android:id="@+id/minimum_interval_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -85,7 +85,7 @@
                 android:fontFamily="sans-serif-medium" />
 
             <com.save.protect.custom.CustomInput
-                android:id="@+id/editText_minimumInterval"
+                android:id="@+id/minimum_interval_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -95,7 +95,7 @@
 
         <!-- 개설 버튼 맨 아래 고정 -->
         <com.save.protect.custom.CustomButton
-            android:id="@+id/button_openNextScreen"
+            android:id="@+id/finish_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"

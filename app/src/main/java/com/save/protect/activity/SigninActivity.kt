@@ -42,33 +42,33 @@ class SigninActivity : BaseActivity() {
             if (event.action == MotionEvent.ACTION_DOWN) {
                 val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(binding.outsideView.windowToken, 0)
-                binding.editTextEmail.clearFocus()
-                binding.editTextPassword.clearFocus()
+                binding.emailInput.clearFocus()
+                binding.passwordInput.clearFocus()
             }
             true
         }
 
 
-        binding.editTextEmail.setIsValidListener(object : IsValidListener {
+        binding.emailInput.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
                 validButton()
                 return text.isNotEmpty()
             }
         })
-        binding.editTextPassword.setIsValidListener(object : IsValidListener {
+        binding.passwordInput.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
                 validButton()
                 return text.isNotEmpty()
             }
         })
 
-        binding.checkBoxEmailSave.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.emailSaveCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
             isSave = isChecked
         }
 
-        binding.btnLogin.setOnClickListener {
-            val email = binding.editTextEmail.text.toString().trim()
-            val password = binding.editTextPassword.text.toString().trim()
+        binding.loginButton.setOnClickListener {
+            val email = binding.emailInput.text.toString().trim()
+            val password = binding.passwordInput.text.toString().trim()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 loadingDialog.show(supportFragmentManager, "")
@@ -94,10 +94,10 @@ class SigninActivity : BaseActivity() {
             }
         }
 
-        binding.btnLogInGuest.setOnClickListener {
+        binding.loginGuestButton.setOnClickListener {
             guestLogin()
         }
-        binding.btnJoin.setOnClickListener {
+        binding.joinButton.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
         }
@@ -111,18 +111,18 @@ class SigninActivity : BaseActivity() {
 
         val email = sharedPref.getString("savedEmail", "")
         if (email != null && email.isNotEmpty()) {
-            binding.editTextEmail.setText(email)
-            binding.checkBoxEmailSave.isChecked = true
+            binding.emailInput.setText(email)
+            binding.emailSaveCheckBox.isChecked = true
         }
         validButton()
     }
 
     // 이메일, 비번 검사
     private fun validButton() {
-        val email = binding.editTextEmail.text.toString().trim()
-        val password = binding.editTextPassword.text.toString().trim()
+        val email = binding.emailInput.text.toString().trim()
+        val password = binding.passwordInput.text.toString().trim()
 
-        binding.btnLogin.setEnable(email.isNotEmpty() && password.isNotEmpty())
+        binding.loginButton.setEnable(email.isNotEmpty() && password.isNotEmpty())
     }
 
     private fun guestLogin() {
@@ -151,7 +151,7 @@ class SigninActivity : BaseActivity() {
     private fun setStringSharedPref() {
         try {
             val editor = sharedPref.edit()
-            val email = binding.editTextEmail.text.toString().trim()
+            val email = binding.emailInput.text.toString().trim()
             editor.putString("savedEmail", email)
             editor.apply()
             Logcat.d("이메일 저장 성공 : $email")

@@ -3,12 +3,9 @@ package com.save.protect.custom
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat.getSystemService
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.save.protect.R
 
 interface ButtonListener {
@@ -23,8 +20,8 @@ class BottomSheetChat @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private lateinit var sheetInput: CustomInput
-    private lateinit var buttonSend: ImageButton
-    private lateinit var textViewSheetTitle: TextView
+    private lateinit var sendButton: ImageButton
+    private lateinit var sheetTitleTextView: TextView
 
     private var buttonListener: ButtonListener? = null
 
@@ -33,8 +30,8 @@ class BottomSheetChat @JvmOverloads constructor(
 
         // View 초기화
         sheetInput = findViewById(R.id.sheet_input)
-        buttonSend = findViewById(R.id.button_send)
-        textViewSheetTitle = findViewById(R.id.textView_sheet_title) // TextView 초기화
+        sendButton = findViewById(R.id.send_button)
+        sheetTitleTextView = findViewById(R.id.sheet_title_text_view) // TextView 초기화
 
         sheetInput.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
@@ -44,7 +41,7 @@ class BottomSheetChat @JvmOverloads constructor(
         })
 
 
-        buttonSend.setOnClickListener {
+        sendButton.setOnClickListener {
             buttonListener?.callback()
             sheetInput.setText("")
         }
@@ -54,7 +51,7 @@ class BottomSheetChat @JvmOverloads constructor(
 
 
     fun setTitle(text: String) {
-        textViewSheetTitle.text = text
+        sheetTitleTextView.text = text
     }
 
     fun setButtonListener(callback: ButtonListener) {
@@ -71,9 +68,9 @@ class BottomSheetChat @JvmOverloads constructor(
 
     fun updateButtonImage(validate: Boolean) {
         if (validate) {
-            buttonSend.setImageResource(R.drawable.icon_check) // 활성화된 이미지 리소스
+            sendButton.setImageResource(R.drawable.icon_check) // 활성화된 이미지 리소스
         } else {
-            buttonSend.setImageResource(R.drawable.icon_check_none) // 비활성화된 이미지 리소스
+            sendButton.setImageResource(R.drawable.icon_check_none) // 비활성화된 이미지 리소스
         }
     }
 }

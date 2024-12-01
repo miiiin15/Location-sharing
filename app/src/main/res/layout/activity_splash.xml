@@ -17,7 +17,7 @@
         tools:context=".activity.SplashActivity">
 
         <TextView
-            android:id="@+id/splashText"
+            android:id="@+id/splash_center_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
@@ -32,7 +32,7 @@
             tools:ignore="HardcodedText,MissingConstraints,SpUsage" />
 
         <TextView
-            android:id="@+id/stateText"
+            android:id="@+id/splash_state_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -42,7 +42,7 @@
             android:textSize="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/splashText"
+            app:layout_constraintTop_toBottomOf="@+id/splash_center_text_view"
             tools:ignore="HardcodedText,MissingConstraints,SpUsage" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

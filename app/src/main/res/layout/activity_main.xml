@@ -11,7 +11,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/root_layout"
+        android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bg"
@@ -20,7 +20,7 @@
         tools:context=".activity.MainActivity">
 
         <TextView
-            android:id="@+id/textViewTitle"
+            android:id="@+id/custom_shareholder_title_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
@@ -31,7 +31,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/button_userInfo"
+            android:id="@+id/user_info_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
@@ -46,12 +46,12 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_userInfo"
+            app:layout_constraintTop_toBottomOf="@+id/user_info_button"
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="16dp">
 
             <Button
-                android:id="@+id/button_open"
+                android:id="@+id/shareholder_button"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
                 android:layout_marginRight="10dp"
@@ -64,7 +64,7 @@
                 tools:ignore="MissingConstraints" />
 
             <Button
-                android:id="@+id/button_enter"
+                android:id="@+id/audience_button"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
                 android:layout_marginLeft="10dp"

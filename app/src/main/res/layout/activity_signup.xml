@@ -10,7 +10,7 @@
     tools:context=".activity.SignupActivity">
 
     <TextView
-        android:id="@+id/textViewTitle"
+        android:id="@+id/custom_shareholder_title_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
@@ -22,17 +22,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.save.protect.custom.CustomInput
-        android:id="@+id/editTextEmail"
+        android:id="@+id/signup_email_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="이메일을 입력하세요"
-        app:layout_constraintBottom_toTopOf="@+id/btnSignUp"
+        app:layout_constraintBottom_toTopOf="@+id/signup_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.save.protect.custom.CustomInput
-        android:id="@+id/editTextPassword"
+        android:id="@+id/signup_password_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -40,11 +40,11 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextEmail"
+        app:layout_constraintTop_toBottomOf="@+id/signup_email_input"
         tools:ignore="MissingConstraints" />
 
     <com.save.protect.custom.CustomButton
-        android:id="@+id/btnSignUp"
+        android:id="@+id/signup_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="회원 가입"

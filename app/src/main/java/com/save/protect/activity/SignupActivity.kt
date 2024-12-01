@@ -12,9 +12,9 @@ import com.save.protect.database.AuthManager
 
 class SignupActivity : BaseActivity() {
 
-    private lateinit var editTextEmail: CustomInput
-    private lateinit var editTextPassword: CustomInput
-    private lateinit var btnSignUp: CustomButton
+    private lateinit var emailInput: CustomInput
+    private lateinit var passwordInput: CustomInput
+    private lateinit var signUpButton: CustomButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,24 +22,24 @@ class SignupActivity : BaseActivity() {
 
         init()
 
-        editTextEmail.setIsValidListener(object : IsValidListener {
+        emailInput.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
                 validButton()
                 return text.isNotEmpty()
             }
         })
-        editTextPassword.setIsValidListener(object : IsValidListener {
+        passwordInput.setIsValidListener(object : IsValidListener {
             override fun isValid(text: String): Boolean {
                 validButton()
                 return text.isNotEmpty()
             }
         })
 
-        btnSignUp.setOnClickListener {
+        signUpButton.setOnClickListener {
             loadingDialog.show(supportFragmentManager, "")
 
-            val email = editTextEmail.text.toString()
-            val password = editTextPassword.text.toString()
+            val email = emailInput.text.toString()
+            val password = passwordInput.text.toString()
 
             if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
                 loadingDialog.dismiss()
@@ -59,18 +59,18 @@ class SignupActivity : BaseActivity() {
     }
 
     private fun init() {
-        editTextEmail = findViewById(R.id.editTextEmail)
-        editTextPassword = findViewById(R.id.editTextPassword)
-        btnSignUp = findViewById(R.id.btnSignUp)
+        emailInput = findViewById(R.id.signup_email_input)
+        passwordInput = findViewById(R.id.signup_password_input)
+        signUpButton = findViewById(R.id.signup_button)
 
         validButton()
     }
 
     private fun validButton() {
-        val email = editTextEmail.text.toString().trim()
-        val password = editTextPassword.text.toString().trim()
+        val email = emailInput.text.toString().trim()
+        val password = passwordInput.text.toString().trim()
 
-        btnSignUp.setEnable(email.isNotEmpty() && password.isNotEmpty())
+        signUpButton.setEnable(email.isNotEmpty() && password.isNotEmpty())
     }
 
 }

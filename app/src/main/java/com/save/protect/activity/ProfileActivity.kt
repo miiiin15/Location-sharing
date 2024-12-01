@@ -36,7 +36,7 @@ class ProfileActivity : BaseActivity() {
 
         init()
 
-        binding.imageViewProfile.setOnClickListener {
+        binding.profileImageView.setOnClickListener {
             try {
                 ImageUtils.selectImageFromGallery(this) {
                     Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
@@ -46,13 +46,13 @@ class ProfileActivity : BaseActivity() {
             }
         }
 
-        binding.buttonRegister.setOnClickListener {
+        binding.registerButton.setOnClickListener {
 
             if (imageUrl != null) {
                 loadingDialog.show(supportFragmentManager, "")
                 FirebaseStorageManager.uploadImageToFirebaseStorage(uid, imageUrl!!) {
                     val URL = it
-                    binding.editTextNickname.text.let {
+                    binding.nicknameInput.text.let {
                         UserInfoManager.setUserInfo(it.toString(), URL.toString()) {
                             Toast.makeText(this, "등록 성공", Toast.LENGTH_SHORT).show()
                             loadingDialog.dismiss()
@@ -74,11 +74,11 @@ class ProfileActivity : BaseActivity() {
         binding.user = userData
         if (userData?.imageUrl?.isNotEmpty()!!) {
             ImageUtils.loadBitmapFromUrl(this, userData?.imageUrl!!) {
-                binding.imageViewProfile.setImageBitmap(it)
+                binding.profileImageView.setImageBitmap(it)
             }
             ImageUtils.loadBitmapFromUrl(this, userData.imageUrl) {
-                binding.imagePreview.visibility = View.VISIBLE
-                binding.imagePreview.setImageBitmap(
+                binding.previewImageView.visibility = View.VISIBLE
+                binding.previewImageView.setImageBitmap(
                     ImageUtils.resizeAndCropToCircle(it!!, markSize, markSize, 3, Color.BLACK)
                 )
             }
@@ -90,10 +90,10 @@ class ProfileActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         ImageUtils.handleActivityResult(requestCode, resultCode, data) {
-            binding.imageViewProfile.setImageBitmap(ImageUtils.loadImageAndResize(this, it, 1000))
+            binding.profileImageView.setImageBitmap(ImageUtils.loadImageAndResize(this, it, 1000))
             imageUrl = it
-            binding.imagePreview.visibility = View.VISIBLE
-            binding.imagePreview.setImageBitmap(
+            binding.previewImageView.visibility = View.VISIBLE
+            binding.previewImageView.setImageBitmap(
                 ImageUtils.resizeAndCropToCircle(this, it, markSize, markSize, 3, Color.BLACK)
             )
         }
